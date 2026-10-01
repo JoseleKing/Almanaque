@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Almanaque</title>
+  <meta name="description" content="Almanaque: la portada de los juegos diarios de palabras en español.">
+  <meta name="theme-color" content="#f3ead7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1813" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/almanaque.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Almanaque">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IM+Fell+DW+Pica:ital@0;1&family=IM+Fell+DW+Pica+SC&display=swap">
+  <link rel="stylesheet" href="styles.css">
+
+  <script>
+    // Aplica el tema guardado antes de pintar, para evitar el parpadeo.
+    try {
+      var tema = localStorage.getItem('almanaque:tema');
+      if (tema === 'light' || tema === 'dark') document.documentElement.dataset.theme = tema;
+    } catch (e) {}
+    // La portada fugaz solo sale al abrir la app, no al volver de un juego.
+    try {
+      if (sessionStorage.getItem('almanaque:portada')) document.documentElement.classList.add('sin-portada');
+      sessionStorage.setItem('almanaque:portada', '1');
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="portada" id="portada" aria-hidden="true">
+    <div class="portada__contenido">
+      <img class="portada__marca" src="icons/almanaque-marca.svg" alt="" width="155" height="169">
+      <p class="portada__nombre">Almanaque</p>
+    </div>
+  </div>
+
+  <div class="pagina">
+    <header class="cabecera">
+      <button class="tema" type="button" id="boton-tema" aria-label="Cambiar entre modo claro y oscuro">
+        <span aria-hidden="true" class="tema__icono"></span>
+      </button>
+
+      <p class="cabecera__antetitulo">Juegos diarios de palabras</p>
+      <h1 class="cabecera__titulo">Almanaque</h1>
+      <p class="cabecera__lema">para curiosos de la lengua española</p>
+
+      <div class="cabecera__fecha">
+        <p class="fecha" id="fecha">&nbsp;</p>
+        <p class="efemerides" id="efemerides">&nbsp;</p>
+      </div>
+    </header>
+
+    <main>
+      <h2 class="visualmente-oculto">Juegos</h2>
+      <ol class="hojas" id="hojas" aria-live="polite"></ol>
+      <p class="aviso" id="aviso" hidden></p>
+    </main>
+
+    <footer class="pie">
+      <p class="pie__floron" aria-hidden="true">❦</p>
+      <p>Cada juego se abre en su propia página.</p>
+      <p class="pie__imprenta">Impreso en la red · Año <span id="anio-romano">MMXXVI</span></p>
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

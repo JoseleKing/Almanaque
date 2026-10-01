@@ -1,0 +1,510 @@
+/* ==========================================================================
+   Almanaque — estilos
+   Los colores están definidos como variables; el modo oscuro solo las redefine.
+   Cada hoja recibe su color de acento desde games.json (variable --acento).
+   ========================================================================== */
+
+:root {
+  --papel: #f3ead7;
+  --papel-borde: #e2d3b2;
+  --hoja: #faf3e3;
+  --tinta: #2b2118;
+  --tinta-suave: #5e4e3c;
+  --regla: #8b7355;
+  --regla-suave: #cdb994;
+  --sombra: rgba(70, 45, 15, 0.35);
+  --grano-opacidad: 0.55;
+  --aclarar-acento: 0%;
+
+  --fuente-titulo: "IM Fell DW Pica", "IM Fell English", Georgia, "Times New Roman", serif;
+  --fuente-versalitas: "IM Fell DW Pica SC", "IM Fell DW Pica", Georgia, serif;
+  --fuente-texto: "EB Garamond", Garamond, Georgia, "Times New Roman", serif;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #1c1813;
+    --papel-borde: #0f0d0a;
+    --hoja: #27211a;
+    --tinta: #eadfc8;
+    --tinta-suave: #b5a68c;
+    --regla: #8a7759;
+    --regla-suave: #4a3f31;
+    --sombra: rgba(0, 0, 0, 0.6);
+    --grano-opacidad: 0.25;
+    --aclarar-acento: 45%;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --papel: #1c1813;
+  --papel-borde: #0f0d0a;
+  --hoja: #27211a;
+  --tinta: #eadfc8;
+  --tinta-suave: #b5a68c;
+  --regla: #8a7759;
+  --regla-suave: #4a3f31;
+  --sombra: rgba(0, 0, 0, 0.6);
+  --grano-opacidad: 0.25;
+  --aclarar-acento: 45%;
+  color-scheme: dark;
+}
+
+/* --- Base ---------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--papel);
+  /* Viñeta de papel envejecido: bordes algo más oscuros. */
+  background-image: radial-gradient(ellipse at center, transparent 55%, var(--papel-borde) 130%);
+  background-attachment: fixed;
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-size: 1.125rem;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Grano del papel, encima del fondo y sin capturar toques. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--grano-opacidad);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .24 0 0 0 0 .1 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.pagina {
+  position: relative;
+  z-index: 1;
+  max-width: 62rem;
+  margin: 0 auto;
+  padding:
+    max(1.25rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right))
+    max(2rem, env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* --- Portada fugaz al abrir ---------------------------------------------- */
+
+.portada {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background-color: var(--papel);
+  background-image: radial-gradient(ellipse at center, transparent 55%, var(--papel-borde) 130%);
+  animation: portada-salida 0.5s ease-in 1.3s forwards;
+}
+
+.sin-portada .portada {
+  display: none;
+}
+
+.portada__contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: portada-entrada 0.6s ease-out both;
+}
+
+.portada__marca {
+  width: min(40vw, 9.5rem);
+  height: auto;
+  filter: drop-shadow(0 8px 14px var(--sombra));
+}
+
+.portada__nombre {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 13vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--tinta);
+}
+
+@keyframes portada-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+}
+
+@keyframes portada-salida {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* --- Cabecera ------------------------------------------------------------ */
+
+.cabecera {
+  position: relative;
+  text-align: center;
+  padding: 1.5rem 0 0;
+  margin-bottom: 2rem;
+}
+
+.cabecera p {
+  margin: 0;
+}
+
+.cabecera__antetitulo {
+  font-family: var(--fuente-versalitas);
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  color: var(--tinta-suave);
+}
+
+.cabecera__antetitulo::before,
+.cabecera__antetitulo::after {
+  content: "✦";
+  font-size: 0.6em;
+  vertical-align: 0.25em;
+  margin: 0 0.6em;
+  color: var(--regla);
+}
+
+.cabecera__titulo {
+  margin: 0.1em 0 0;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 17vw, 7rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 0 var(--papel-borde);
+}
+
+.cabecera__lema {
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--tinta-suave);
+  margin-top: 0.25rem !important;
+}
+
+.cabecera__fecha {
+  margin-top: 1.25rem;
+  padding: 0.55rem 0.5rem 0.6rem;
+  border-top: 4px double var(--regla);
+  border-bottom: 4px double var(--regla);
+}
+
+.fecha {
+  font-family: var(--fuente-titulo);
+  font-size: clamp(1.2rem, 5vw, 1.55rem);
+  line-height: 1.2;
+}
+
+.efemerides {
+  margin-top: 0.2rem !important;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--tinta-suave);
+}
+
+/* Botón de tema: un pequeño sol o luna de grabado. */
+.tema {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--regla-suave);
+  border-radius: 50%;
+  background: var(--hoja);
+  color: var(--tinta);
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tema__icono::before {
+  content: "☾";
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tema__icono::before {
+    content: "☀";
+  }
+}
+
+:root[data-theme="dark"] .tema__icono::before {
+  content: "☀";
+}
+
+.tema:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 3px;
+}
+
+/* --- Hojas (tarjetas de juego) ------------------------------------------- */
+
+.hojas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 46rem) {
+  .hojas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem;
+  }
+}
+
+.hoja {
+  --acento: var(--tinta);
+  --acento-texto: var(--acento);
+  --acento-texto: color-mix(in oklab, var(--acento) calc(100% - var(--aclarar-acento)), white);
+  display: flex;
+}
+
+.hoja__cuerpo {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.35rem 1.1rem 1.25rem;
+  background: var(--hoja);
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid var(--regla);
+  border-top: 5px solid var(--acento);
+  /* Doble filete interior, como el marco de una página impresa. */
+  box-shadow:
+    inset 0 0 0 5px var(--hoja),
+    inset 0 0 0 6px var(--regla-suave),
+    0 1px 0 var(--papel-borde),
+    0 10px 18px -12px var(--sombra);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+a.hoja__cuerpo:hover {
+  transform: translateY(-2px) rotate(-0.25deg);
+  box-shadow:
+    inset 0 0 0 5px var(--hoja),
+    inset 0 0 0 6px var(--regla-suave),
+    0 1px 0 var(--papel-borde),
+    0 16px 24px -14px var(--sombra);
+}
+
+a.hoja__cuerpo:active {
+  transform: translateY(0) scale(0.99);
+}
+
+a.hoja__cuerpo:focus-visible {
+  outline: 3px solid var(--acento-texto);
+  outline-offset: 3px;
+}
+
+.hoja__icono {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 0.9rem;
+  box-shadow: 0 0 0 1px var(--regla-suave), 0 3px 8px -4px var(--sombra);
+  background: #f4ead5;
+}
+
+.hoja__texto {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.hoja__numero {
+  font-family: var(--fuente-versalitas);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  color: var(--tinta-suave);
+}
+
+.hoja__nombre {
+  font-family: var(--fuente-titulo);
+  font-size: 1.75rem;
+  line-height: 1.05;
+  color: var(--acento-texto);
+}
+
+.hoja__subtitulo {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--tinta);
+}
+
+.hoja__descripcion {
+  margin-top: 0.25rem;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: var(--tinta-suave);
+}
+
+/* Manecilla de imprenta que señala la entrada al juego. */
+.hoja__mano {
+  font-size: 1.6rem;
+  color: var(--acento-texto);
+  transition: transform 0.18s ease;
+}
+
+a.hoja__cuerpo:hover .hoja__mano {
+  transform: translateX(3px);
+}
+
+/* Marcas en la esquina: «nuevo», «próximamente», «hecho». */
+.hoja__marcas {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.8rem;
+  display: flex;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.marca {
+  font-family: var(--fuente-versalitas);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  padding: 0.28rem 0.45rem 0.3rem;
+  border-radius: 2px;
+}
+
+.marca--nuevo {
+  background: var(--acento);
+  color: #fff8ea;
+}
+
+.marca--proximamente {
+  border: 1px dashed var(--tinta-suave);
+  color: var(--tinta-suave);
+}
+
+/* Sello de caucho de «hecho». */
+.marca--hecho {
+  border: 2px solid var(--acento-texto);
+  color: var(--acento-texto);
+  transform: rotate(-7deg);
+  opacity: 0.9;
+}
+
+.hoja--hecho .hoja__icono {
+  filter: saturate(0.75);
+}
+
+.hoja--proximamente .hoja__cuerpo {
+  border-style: dashed;
+  border-top-style: solid;
+  cursor: default;
+}
+
+.hoja--proximamente .hoja__icono {
+  filter: grayscale(1);
+  opacity: 0.65;
+}
+
+.hoja--proximamente .hoja__mano {
+  visibility: hidden;
+}
+
+/* Deja hueco a las marcas para que no pisen el texto. */
+.hoja--con-marcas .hoja__numero {
+  padding-right: 5.5rem;
+}
+
+@media (max-width: 22rem) {
+  .hoja__cuerpo {
+    gap: 0.75rem;
+    padding-inline: 0.9rem;
+  }
+  .hoja__icono {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+  .hoja__mano {
+    display: none;
+  }
+  .hoja__cuerpo {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+.aviso {
+  text-align: center;
+  font-style: italic;
+  color: var(--tinta-suave);
+}
+
+/* --- Pie ----------------------------------------------------------------- */
+
+.pie {
+  margin-top: 3rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--tinta-suave);
+}
+
+.pie p {
+  margin: 0.2rem 0;
+}
+
+.pie__floron {
+  font-size: 1.6rem;
+  color: var(--regla);
+}
+
+.pie__imprenta {
+  font-family: var(--fuente-versalitas);
+  letter-spacing: 0.12em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+
+  .portada__contenido {
+    animation: none;
+  }
+}

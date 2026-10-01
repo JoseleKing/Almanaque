@@ -1,0 +1,38 @@
+[
+  {
+    "id": "calendas",
+    "nombre": "Calendas",
+    "subtitulo": "El duelo de las fechas",
+    "descripcion": "Dos palabras y un toque: ¿cuál entró antes en el español? Cuida tu racha.",
+    "url": "https://calendas.calendas.workers.dev",
+    "color": "#a8321e",
+    "icono": "icons/calendas.png"
+  },
+  {
+    "id": "periplo",
+    "nombre": "Periplo",
+    "subtitulo": "El viaje de las palabras",
+    "descripcion": "Adivina de dónde viene cada palabra. Tres nuevas cada día.",
+    "url": "https://joseleking.github.io/Periplo/",
+    "color": "#2a7f8a",
+    "icono": "icons/periplo.svg"
+  },
+  {
+    "id": "mentidero",
+    "nombre": "Mentidero",
+    "subtitulo": "¿Verdad o cuento?",
+    "descripcion": "Una palabra rara y varias definiciones. Solo una dice la verdad.",
+    "url": "https://joseleking.github.io/Mentidero/",
+    "color": "#9b2c22",
+    "icono": "icons/mentidero.svg"
+  },
+  {
+    "id": "trampantojo",
+    "nombre": "Trampantojo",
+    "subtitulo": "La pista críptica del día",
+    "descripcion": "Una definición en español que no es lo que parece.",
+    "url": "https://joseleking.github.io/Trampantojo/",
+    "color": "#8a7148",
+    "icono": "icons/trampantojo.svg"
+  }
+]
