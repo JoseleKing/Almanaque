@@ -34,5 +34,15 @@
     "url": "https://joseleking.github.io/Trampantojo/",
     "color": "#8a7148",
     "icono": "icons/trampantojo.svg"
+  },
+  {
+    "id": "atlas",
+    "nombre": "Atlas",
+    "subtitulo": "¿Dónde se dice?",
+    "descripcion": "Una palabra que no se dice en todas partes. Señala en el mapa dónde se usa.",
+    "url": "https://joseleking.github.io/Atlas/",
+    "color": "#a33a2a",
+    "icono": "icons/atlas.svg",
+    "estado": "nuevo"
   }
 ]
