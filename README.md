@@ -67,7 +67,7 @@ JavaScript, sin dependencias ni compilación.
    volver con el estilo que quiera:
 
    ```html
-   <a class="boton" data-almanaque-volver hidden href="https://joseleking.github.io/Almanaque/">☜ Volver a Almanaque</a>
+   <a class="boton" data-almanaque-volver hidden href="https://joseleking.github.io/Almanaque/">☜ Regresar al Almanaque</a>
    ```
 
    `volver-almanaque.js` lo muestra solo si se llegó desde Almanaque y lo lleva al mismo
