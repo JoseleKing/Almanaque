@@ -60,7 +60,6 @@
     "descripcion": "Tres refranes de toda la vida, reescritos en lenguaje de ventanilla. Adivina el original.",
     "url": "https://joseleking.github.io/Paremia/",
     "color": "#3e5f3a",
-    "icono": "icons/paremia.png",
-    "estado": "nuevo"
+    "icono": "icons/paremia.png"
   }
 ]
