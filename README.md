@@ -49,7 +49,10 @@ JavaScript, sin dependencias ni compilación.
    Almanaque abre cada juego con `?desde=almanaque&juego=<id>`; solo entonces el juego
    muestra una franja «☜ Almanaque» arriba, que se mantiene mientras siga abierta esa
    pestaña. Quien entre al juego directamente no la ve. Si el juego guarda archivos para
-   jugar sin conexión, añade también `volver-almanaque.js` a esa lista.
+   jugar sin conexión, añade también `volver-almanaque.js` a esa lista. Si el juego pone
+   versión a sus archivos (`app.js?v=3`), pónsela también a este
+   (`volver-almanaque.js?v=2`) y súbela cada vez que lo actualices: si no, el navegador
+   puede seguir usando la copia antigua.
 4. Para que la hoja salga como «Hecho», el juego debe avisar cuando la partida de hoy esté
    terminada (y también al abrirlo si ya lo estaba):
 
@@ -59,6 +62,16 @@ JavaScript, sin dependencias ni compilación.
 
    Al volver con la mano ☜, Almanaque recibe `?hecho=<id>` y marca la hoja. Abrir un juego
    sin jugarlo no la marca.
+
+   En la pantalla final, junto a «Compartir resultado», el juego puede poner un botón de
+   volver con el estilo que quiera:
+
+   ```html
+   <a class="boton" data-almanaque-volver hidden href="https://joseleking.github.io/Almanaque/">☜ Volver a Almanaque</a>
+   ```
+
+   `volver-almanaque.js` lo muestra solo si se llegó desde Almanaque y lo lleva al mismo
+   sitio que la mano ☜.
 5. Sube los cambios a GitHub. Si quieres que quien tenga la app instalada vea el cambio
    también sin conexión, actualiza la versión de la caché (siguiente apartado).
 
