@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Almanaque</title>
   <meta name="description" content="Almanaque: cajón de sastre de juegos de palabras en español.">
-  <meta name="theme-color" content="#f3ead7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1c1813" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3ead7" id="color-tema">
   <meta name="color-scheme" content="light dark">
 
   <link rel="manifest" href="manifest.json">
@@ -25,10 +24,14 @@
 
   <script>
     // Aplica el tema guardado antes de pintar, para evitar el parpadeo.
+    // Sin elección guardada, la app empieza en modo luminoso.
+    var tema = 'light';
     try {
-      var tema = localStorage.getItem('almanaque:tema');
-      if (tema === 'light' || tema === 'dark') document.documentElement.dataset.theme = tema;
+      var guardado = localStorage.getItem('almanaque:tema');
+      if (guardado === 'dark') tema = guardado;
     } catch (e) {}
+    document.documentElement.dataset.theme = tema;
+    if (tema === 'dark') document.getElementById('color-tema').content = '#1c1813';
     // La portada fugaz solo sale al abrir la app, no al volver de un juego.
     try {
       if (sessionStorage.getItem('almanaque:portada')) document.documentElement.classList.add('sin-portada');

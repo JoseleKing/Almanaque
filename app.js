@@ -256,6 +256,7 @@
   document.getElementById('boton-tema').addEventListener('click', function () {
     var nuevo = temaActual() === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = nuevo;
+    document.getElementById('color-tema').content = nuevo === 'dark' ? '#1c1813' : '#f3ead7';
     guardar(CLAVE_TEMA, nuevo);
   });
 
