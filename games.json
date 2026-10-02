@@ -42,8 +42,7 @@
     "descripcion": "Una palabra que no se dice en todas partes. Señala en el mapa dónde se usa.",
     "url": "https://joseleking.github.io/Atlas/",
     "color": "#a33a2a",
-    "icono": "icons/atlas.svg",
-    "estado": "nuevo"
+    "icono": "icons/atlas.svg"
   },
   {
     "id": "gentilicio",
@@ -52,7 +51,6 @@
     "descripcion": "Tres gentilicios al día: adivina de qué lugar son y descubre de dónde viene su nombre.",
     "url": "https://joseleking.github.io/Gentilicio/",
     "color": "#2F5175",
-    "icono": "icons/gentilicio.svg",
-    "estado": "nuevo"
+    "icono": "icons/gentilicio.svg"
   }
 ]
