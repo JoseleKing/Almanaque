@@ -3,7 +3,8 @@
 (function () {
   'use strict';
 
-  var CLAVE_ABIERTOS = 'almanaque:abiertos';
+  var CLAVE_HECHOS = 'almanaque:hechos';
+  var CLAVE_ANTIGUA = 'almanaque:abiertos';
   var CLAVE_TEMA = 'almanaque:tema';
 
   var hojasEl = document.getElementById('hojas');
@@ -87,20 +88,36 @@
     document.getElementById('anio-romano').textContent = romano(hoy.getFullYear());
   }
 
-  /* --- Juegos abiertos hoy ----------------------------------------------- */
+  /* --- Juegos hechos hoy ------------------------------------------------- */
 
-  function abiertosHoy() {
+  function hechosHoy() {
     try {
-      var datos = JSON.parse(leer(CLAVE_ABIERTOS) || 'null');
+      var datos = JSON.parse(leer(CLAVE_HECHOS) || 'null');
       if (datos && datos.fecha === claveDeHoy() && Array.isArray(datos.ids)) return datos.ids;
     } catch (e) { /* datos corruptos: se ignoran */ }
     return [];
   }
 
-  function marcarAbierto(id) {
-    var ids = abiertosHoy();
+  function marcarHecho(id) {
+    var ids = hechosHoy();
     if (ids.indexOf(id) === -1) ids.push(id);
-    guardar(CLAVE_ABIERTOS, JSON.stringify({ fecha: claveDeHoy(), ids: ids }));
+    guardar(CLAVE_HECHOS, JSON.stringify({ fecha: claveDeHoy(), ids: ids }));
+  }
+
+  // Un juego terminado vuelve con ?hecho=<id> (ver para-los-juegos/volver-almanaque.js).
+  // Abrir un juego no basta para marcarlo: solo cuenta haberlo jugado.
+  function recogerHecho() {
+    try {
+      window.localStorage.removeItem(CLAVE_ANTIGUA);
+    } catch (e) { /* sin almacenamiento */ }
+    try {
+      var url = new URL(window.location.href);
+      var id = url.searchParams.get('hecho');
+      if (!id) return;
+      marcarHecho(id);
+      url.searchParams.delete('hecho');
+      window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
+    } catch (e) { /* navegador antiguo: se ignora */ }
   }
 
   /* --- Render ------------------------------------------------------------ */
@@ -119,20 +136,21 @@
 
   // Marca el enlace para que el juego muestre la mano ☜ de vuelta a Almanaque
   // (ver para-los-juegos/volver-almanaque.js).
-  function enlaceDesdeAlmanaque(direccion) {
+  function enlaceDesdeAlmanaque(direccion, id) {
     try {
       var url = new URL(direccion, window.location.href);
       url.searchParams.set('desde', 'almanaque');
+      url.searchParams.set('juego', id);
       return url.href;
     } catch (e) {
       return direccion;
     }
   }
 
-  function crearHoja(juego, indice, abiertos) {
+  function crearHoja(juego, indice, hechos) {
     var estado = normalizarEstado(juego.estado);
     var proximamente = estado === 'proximamente' || !juego.url;
-    var hecho = !proximamente && abiertos.indexOf(juego.id) !== -1;
+    var hecho = !proximamente && hechos.indexOf(juego.id) !== -1;
 
     var li = el('li', 'hoja');
     if (juego.color) li.style.setProperty('--acento', juego.color);
@@ -144,10 +162,7 @@
       cuerpo = el('div', 'hoja__cuerpo');
     } else {
       cuerpo = el('a', 'hoja__cuerpo');
-      cuerpo.href = enlaceDesdeAlmanaque(juego.url);
-      cuerpo.addEventListener('click', function () {
-        marcarAbierto(juego.id);
-      });
+      cuerpo.href = enlaceDesdeAlmanaque(juego.url, juego.id);
     }
 
     var icono = el('img', 'hoja__icono');
@@ -183,10 +198,10 @@
   }
 
   function pintarHojas() {
-    var abiertos = abiertosHoy();
+    var hechos = hechosHoy();
     var fragmento = document.createDocumentFragment();
     juegos.forEach(function (juego, i) {
-      fragmento.appendChild(crearHoja(juego, i, abiertos));
+      fragmento.appendChild(crearHoja(juego, i, hechos));
     });
     hojasEl.replaceChildren(fragmento);
     diaPintado = claveDeHoy();
@@ -259,6 +274,7 @@
 
   /* --- Arranque ---------------------------------------------------------- */
 
+  recogerHecho();
   pintarCabecera();
   cargarJuegos();
 

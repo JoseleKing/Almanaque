@@ -46,11 +46,20 @@ JavaScript, sin dependencias ni compilación.
    <script src="volver-almanaque.js" defer></script>
    ```
 
-   Almanaque abre cada juego con `?desde=almanaque`; solo entonces el juego muestra una
-   franja «☜ Almanaque» arriba, que se mantiene mientras siga abierta esa pestaña.
-   Quien entre al juego directamente no la ve. Si el juego guarda archivos para jugar sin
-   conexión, añade también `volver-almanaque.js` a esa lista.
-4. Sube los cambios a GitHub. Si quieres que quien tenga la app instalada vea el cambio
+   Almanaque abre cada juego con `?desde=almanaque&juego=<id>`; solo entonces el juego
+   muestra una franja «☜ Almanaque» arriba, que se mantiene mientras siga abierta esa
+   pestaña. Quien entre al juego directamente no la ve. Si el juego guarda archivos para
+   jugar sin conexión, añade también `volver-almanaque.js` a esa lista.
+4. Para que la hoja salga como «Hecho», el juego debe avisar cuando la partida de hoy esté
+   terminada (y también al abrirlo si ya lo estaba):
+
+   ```js
+   window.almanaqueHecho && window.almanaqueHecho();
+   ```
+
+   Al volver con la mano ☜, Almanaque recibe `?hecho=<id>` y marca la hoja. Abrir un juego
+   sin jugarlo no la marca.
+5. Sube los cambios a GitHub. Si quieres que quien tenga la app instalada vea el cambio
    también sin conexión, actualiza la versión de la caché (siguiente apartado).
 
 ## Actualizar la versión de la caché
