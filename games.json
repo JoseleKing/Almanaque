@@ -44,5 +44,15 @@
     "color": "#a33a2a",
     "icono": "icons/atlas.svg",
     "estado": "nuevo"
+  },
+  {
+    "id": "gentilicio",
+    "nombre": "Gentilicio",
+    "subtitulo": "¿De dónde eres?",
+    "descripcion": "Tres gentilicios al día: adivina de qué lugar son y descubre de dónde viene su nombre.",
+    "url": "https://joseleking.github.io/Gentilicio/",
+    "color": "#2F5175",
+    "icono": "icons/gentilicio.svg",
+    "estado": "nuevo"
   }
 ]
