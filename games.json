@@ -39,7 +39,7 @@
     "id": "atlas",
     "nombre": "Atlas",
     "subtitulo": "¿Dónde se dice?",
-    "descripcion": "Una palabra que no se dice en todas partes. Señala en el mapa dónde se usa.",
+    "descripcion": "Tres palabras que no se dicen en todas partes. Señala en el mapa dónde se usa cada una.",
     "url": "https://joseleking.github.io/Atlas/",
     "color": "#a33a2a",
     "icono": "icons/atlas.svg"
