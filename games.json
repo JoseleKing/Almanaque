@@ -70,5 +70,14 @@
     "url": "https://joseleking.github.io/Relicario/",
     "color": "#B3261E",
     "icono": "icons/relicario.svg"
+  },
+  {
+    "id": "toponimia",
+    "nombre": "Toponimia",
+    "subtitulo": "¿Qué significa su nombre?",
+    "descripcion": "Tres lugares del mundo hispanohablante al día. Descubre qué significa su nombre y de qué lengua viene.",
+    "url": "https://joseleking.github.io/Toponimia/",
+    "color": "#B23A2E",
+    "icono": "icons/toponimia.svg"
   }
 ]
