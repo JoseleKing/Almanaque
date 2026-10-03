@@ -63,6 +63,23 @@ JavaScript, sin dependencias ni compilación.
    Al volver con la mano ☜, Almanaque recibe `?hecho=<id>` y marca la hoja. Abrir un juego
    sin jugarlo no la marca.
 
+   Si además le pasa el resultado de hoy, Almanaque lo muestra en una línea al pie de la
+   hoja («Hoy ● ● ○ · racha 5»):
+
+   ```js
+   window.almanaqueHecho && window.almanaqueHecho({ aciertos: 2, total: 3 });
+   window.almanaqueHecho && window.almanaqueHecho({ aciertos: 3, total: 3, racha: 8 });
+   window.almanaqueHecho && window.almanaqueHecho({ texto: 'Resuelto' });
+   ```
+
+   Todos los campos son opcionales. Con `aciertos` y `total` salen tantas casillas como
+   `total` (o la cifra `2/12` si son más de diez); `texto` es libre y corto (hasta 40
+   caracteres). El resultado se guarda en el `localStorage` que comparten todos los
+   juegos de `joseleking.github.io`, así que llega y marca la hoja aunque el jugador no
+   vuelva con la mano ☜. Se borra solo al cambiar de día. Si el juego no está en
+   `joseleking.github.io/<Nombre>/`, el id se toma de la ruta en minúsculas: debe coincidir
+   con el de `games.json`.
+
    En la pantalla final, junto a «Compartir resultado», el juego puede poner un botón de
    volver con el estilo que quiera:
 

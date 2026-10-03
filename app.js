@@ -6,6 +6,7 @@
   var CLAVE_HECHOS = 'almanaque:hechos';
   var CLAVE_ANTIGUA = 'almanaque:abiertos';
   var CLAVE_TEMA = 'almanaque:tema';
+  var CLAVE_RESULTADOS = 'almanaque:resultados';
 
   var hojasEl = document.getElementById('hojas');
   var avisoEl = document.getElementById('aviso');
@@ -120,6 +121,56 @@
     } catch (e) { /* navegador antiguo: se ignora */ }
   }
 
+  /* --- Resultados de hoy ------------------------------------------------ */
+
+  // Los guarda cada juego al terminar (ver para-los-juegos/volver-almanaque.js).
+  function resultadosHoy() {
+    try {
+      var datos = JSON.parse(leer(CLAVE_RESULTADOS) || 'null');
+      if (datos && datos.fecha === claveDeHoy() && datos.juegos && typeof datos.juegos === 'object') return datos.juegos;
+    } catch (e) { /* datos corruptos: se ignoran */ }
+    return {};
+  }
+
+  // Más de diez casillas no caben en la línea: se escribe la cifra.
+  var MAX_PUNTOS = 10;
+
+  function crearResultado(r) {
+    var tieneCuenta = typeof r.aciertos === 'number' && typeof r.total === 'number' && r.total > 0;
+    var tieneTexto = typeof r.texto === 'string' && r.texto;
+    if (!tieneCuenta && !tieneTexto) return null;
+
+    var linea = el('span', 'hoja__resultado');
+    var dicho = ['Hoy'];
+    linea.appendChild(el('span', 'hoja__resultado-rotulo', 'Hoy'));
+
+    if (tieneCuenta) {
+      var aciertos = Math.min(Math.max(0, r.aciertos), r.total);
+      if (r.total <= MAX_PUNTOS) {
+        var puntos = el('span', 'hoja__puntos');
+        for (var i = 0; i < r.total; i++) {
+          puntos.appendChild(el('span', i < aciertos ? 'punto punto--acierto' : 'punto'));
+        }
+        linea.appendChild(puntos);
+      } else {
+        linea.appendChild(el('span', 'hoja__resultado-cifra', aciertos + '/' + r.total));
+      }
+      dicho.push(aciertos + ' de ' + r.total);
+    }
+    if (tieneTexto) {
+      linea.appendChild(el('span', 'hoja__resultado-texto', r.texto));
+      dicho.push(r.texto);
+    }
+    if (typeof r.racha === 'number' && r.racha > 0) {
+      linea.appendChild(el('span', 'hoja__resultado-racha', 'racha ' + r.racha));
+      dicho.push('racha de ' + r.racha);
+    }
+
+    linea.setAttribute('role', 'img');
+    linea.setAttribute('aria-label', dicho.join(', '));
+    return linea;
+  }
+
   /* --- Render ------------------------------------------------------------ */
 
   function el(etiqueta, clase, texto) {
@@ -147,10 +198,12 @@
     }
   }
 
-  function crearHoja(juego, indice, hechos) {
+  function crearHoja(juego, indice, hechos, resultados) {
     var estado = normalizarEstado(juego.estado);
     var proximamente = estado === 'proximamente' || !juego.url;
-    var hecho = !proximamente && hechos.indexOf(juego.id) !== -1;
+    var resultado = proximamente ? null : resultados[juego.id];
+    // Si el juego ha dejado su resultado de hoy, está hecho aunque no se volviera con ☜.
+    var hecho = !proximamente && (hechos.indexOf(juego.id) !== -1 || !!resultado);
 
     var li = el('li', 'hoja');
     if (juego.color) li.style.setProperty('--acento', juego.color);
@@ -178,6 +231,8 @@
     texto.appendChild(el('span', 'hoja__nombre', juego.nombre));
     if (juego.subtitulo) texto.appendChild(el('span', 'hoja__subtitulo', juego.subtitulo));
     if (juego.descripcion) texto.appendChild(el('span', 'hoja__descripcion', juego.descripcion));
+    var lineaResultado = resultado && crearResultado(resultado);
+    if (lineaResultado) texto.appendChild(lineaResultado);
     cuerpo.appendChild(texto);
 
     var mano = el('span', 'hoja__mano', '☞');
@@ -199,9 +254,10 @@
 
   function pintarHojas() {
     var hechos = hechosHoy();
+    var resultados = resultadosHoy();
     var fragmento = document.createDocumentFragment();
     juegos.forEach(function (juego, i) {
-      fragmento.appendChild(crearHoja(juego, i, hechos));
+      fragmento.appendChild(crearHoja(juego, i, hechos, resultados));
     });
     hojasEl.replaceChildren(fragmento);
     diaPintado = claveDeHoy();
@@ -232,7 +288,7 @@
   }
 
   // Al volver a la portada (botón atrás, cambiar de app, pasar la medianoche)
-  // se refrescan la fecha y las marcas de «hecho».
+  // se refrescan la fecha, las marcas de «hecho» y los resultados.
   function refrescar() {
     pintarCabecera();
     if (juegos.length) pintarHojas();

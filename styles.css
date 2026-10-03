@@ -379,6 +379,49 @@ a.hoja__cuerpo:focus-visible {
   color: var(--tinta-suave);
 }
 
+/* Resultado de hoy: una línea bajo la descripción, tras un filete corto. */
+.hoja__resultado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.55rem;
+  margin-top: 0.55rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--regla-suave);
+  align-self: flex-start;
+  font-family: var(--fuente-versalitas);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  color: var(--acento-texto);
+}
+
+.hoja__resultado-rotulo {
+  color: var(--tinta-suave);
+}
+
+.hoja__puntos {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+.punto {
+  width: 0.62rem;
+  height: 0.62rem;
+  border: 1.5px solid var(--acento-texto);
+  border-radius: 50%;
+}
+
+.punto--acierto {
+  background: var(--acento-texto);
+}
+
+.hoja__resultado-racha::before {
+  content: "·";
+  margin-right: 0.55rem;
+  color: var(--tinta-suave);
+}
+
 /* Manecilla de imprenta que señala la entrada al juego. */
 .hoja__mano {
   font-size: 1.6rem;
