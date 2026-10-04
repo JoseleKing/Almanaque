@@ -231,13 +231,18 @@
     texto.appendChild(el('span', 'hoja__nombre', juego.nombre));
     if (juego.subtitulo) texto.appendChild(el('span', 'hoja__subtitulo', juego.subtitulo));
     if (juego.descripcion) texto.appendChild(el('span', 'hoja__descripcion', juego.descripcion));
-    var lineaResultado = resultado && crearResultado(resultado);
-    if (lineaResultado) texto.appendChild(lineaResultado);
     cuerpo.appendChild(texto);
 
     var mano = el('span', 'hoja__mano', '☞');
     mano.setAttribute('aria-hidden', 'true');
     cuerpo.appendChild(mano);
+
+    // El resultado va en la esquina de abajo, haciendo pareja con las marcas de arriba.
+    var lineaResultado = resultado && crearResultado(resultado);
+    if (lineaResultado) {
+      li.classList.add('hoja--con-resultado');
+      cuerpo.appendChild(lineaResultado);
+    }
 
     var marcas = el('span', 'hoja__marcas');
     if (estado === 'nuevo' && !proximamente) marcas.appendChild(el('span', 'marca marca--nuevo', 'Nuevo'));

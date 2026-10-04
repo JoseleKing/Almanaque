@@ -379,16 +379,16 @@ a.hoja__cuerpo:focus-visible {
   color: var(--tinta-suave);
 }
 
-/* Resultado de hoy: una línea bajo la descripción, tras un filete corto. */
+/* Resultado de hoy: en la esquina de abajo a la derecha, como las marcas de arriba. */
 .hoja__resultado {
+  position: absolute;
+  bottom: 0.7rem;
+  right: 0.8rem;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.2rem 0.55rem;
-  margin-top: 0.55rem;
-  padding-top: 0.45rem;
-  border-top: 1px solid var(--regla-suave);
-  align-self: flex-start;
+  gap: 0.55rem;
+  white-space: nowrap;
+  pointer-events: none;
   font-family: var(--fuente-versalitas);
   font-size: 0.85rem;
   letter-spacing: 0.1em;
@@ -492,6 +492,11 @@ a.hoja__cuerpo:hover .hoja__mano {
 /* Deja hueco a las marcas para que no pisen el texto. */
 .hoja--con-marcas .hoja__numero {
   padding-right: 5.5rem;
+}
+
+/* Y abajo, hueco para el resultado. */
+.hoja--con-resultado .hoja__cuerpo {
+  padding-bottom: 2.3rem;
 }
 
 @media (max-width: 22rem) {
