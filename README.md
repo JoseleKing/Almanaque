@@ -12,6 +12,7 @@ JavaScript, sin dependencias ni compilación.
 | `icons/` | Iconos de los juegos (SVG o PNG) y de la app. |
 | `index.html`, `styles.css`, `app.js` | La portada. No hay que tocarlos para añadir juegos. |
 | `manifest.json`, `sw.js` | PWA: instalación y funcionamiento sin conexión. |
+| `reiniciar/index.html` | Página para borrar el progreso de todos los juegos (para pruebas). |
 
 ## Añadir un juego
 
@@ -121,6 +122,17 @@ python3 -m http.server 8000
 
 y abre <http://localhost:8000>. Para probar el modo sin conexión: DevTools → Application →
 Service Workers (o Network → Offline) y recarga.
+
+### Reiniciar todos los juegos
+
+Visita `/reiniciar/` (por ejemplo <https://joseleking.github.io/Almanaque/reiniciar/>) y
+pulsa «Borrar todo». Borra las partidas, rachas y estadísticas de todos los juegos y las
+hojas hechas y los resultados de hoy de la portada, en ese navegador: todo lo que esté
+guardado bajo `<id>:…` (con los `id` de `games.json`) y las claves `almanaque:hechos` y
+`almanaque:resultados`. El modo claro u oscuro de cada juego se conserva (las claves que
+acaban en `:tema`). Funciona porque todos los juegos comparten origen
+(`joseleking.github.io`); en local solo alcanza a los juegos servidos desde el mismo
+`localhost:puerto`. Un juego nuevo queda incluido solo si guarda bajo `<id>:`.
 
 ## Publicar en GitHub Pages
 

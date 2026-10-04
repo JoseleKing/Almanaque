@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Reiniciar Almanaque</title>
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="../icons/almanaque.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IM+Fell+DW+Pica:ital@0;1&family=IM+Fell+DW+Pica+SC&display=swap">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .reinicio { max-width: 30rem; margin: 0 auto; text-align: center; }
+    .reinicio p { margin: 0 0 1rem; }
+    .reinicio__botones { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+    .reinicio__boton {
+      display: block; padding: 0.6rem 1rem; border: 1px solid var(--tinta); border-radius: 2px;
+      background: var(--tinta); color: var(--papel); font: inherit; text-decoration: none; cursor: pointer;
+    }
+    .reinicio__boton--suave { background: transparent; color: var(--tinta); }
+  </style>
+  <script>
+    try {
+      if (localStorage.getItem('almanaque:tema') === 'dark') document.documentElement.dataset.theme = 'dark';
+      else document.documentElement.dataset.theme = 'light';
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="pagina">
+    <header class="cabecera">
+      <p class="cabecera__antetitulo">Borrón y cuenta nueva</p>
+      <h1 class="cabecera__titulo">Almanaque</h1>
+      <p class="cabecera__lema">reiniciar todos los juegos</p>
+    </header>
+
+    <main class="reinicio">
+      <section id="pregunta">
+        <p>Se borrarán las partidas, las rachas y las estadísticas de todos los juegos
+          (Calendas, Periplo, Mentidero…) y los resultados de hoy de la portada,
+          en este navegador. El modo claro u oscuro se conserva. No se puede deshacer.</p>
+        <div class="reinicio__botones">
+          <button class="reinicio__boton" id="boton-borrar" type="button">Borrar todo</button>
+          <a class="reinicio__boton reinicio__boton--suave" href="../">Volver a Almanaque</a>
+        </div>
+      </section>
+      <section id="hecho" hidden>
+        <p>Hecho: todo está como el primer día. Volviendo a Almanaque…</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Todos los juegos comparten origen con Almanaque (joseleking.github.io), así que
+    // desde aquí se alcanza su localStorage. Cada juego guarda bajo «<id>:…» (el id de
+    // games.json); se borra todo lo que empiece así salvo el tema elegido.
+    var JUEGOS = ['calendas', 'periplo', 'mentidero', 'trampantojo', 'atlas',
+      'gentilicio', 'paremia', 'relicario', 'toponimia'];
+    // Lo de la portada: hojas hechas y resultados de hoy (no el tema).
+    var DE_ALMANAQUE = ['almanaque:hechos', 'almanaque:resultados', 'almanaque:abiertos', 'almanaque:hecho'];
+
+    function borrar(almacen, prefijos) {
+      try {
+        Object.keys(almacen).forEach(function (clave) {
+          if (/:tema$/.test(clave)) return;
+          var delJuego = prefijos.some(function (p) { return clave.indexOf(p + ':') === 0; });
+          if (delJuego || DE_ALMANAQUE.indexOf(clave) !== -1) almacen.removeItem(clave);
+        });
+      } catch (e) { /* sin almacenamiento */ }
+    }
+
+    function idsDeLosJuegos() {
+      // games.json manda: así un juego nuevo queda incluido sin tocar esta página.
+      return fetch('../games.json', { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (juegos) {
+          var ids = juegos.map(function (j) { return j && j.id; }).filter(Boolean);
+          return JUEGOS.concat(ids.filter(function (id) { return JUEGOS.indexOf(id) === -1; }));
+        })
+        .catch(function () { return JUEGOS; });
+    }
+
+    document.getElementById('boton-borrar').addEventListener('click', function () {
+      this.disabled = true;
+      idsDeLosJuegos().then(function (ids) {
+        borrar(window.localStorage, ids);
+        borrar(window.sessionStorage, ids);
+        document.getElementById('pregunta').hidden = true;
+        document.getElementById('hecho').hidden = false;
+        setTimeout(function () { location.href = '../'; }, 1200);
+      });
+    });
+  </script>
+</body>
+</html>
