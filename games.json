@@ -29,8 +29,8 @@
   {
     "id": "trampantojo",
     "nombre": "Trampantojo",
-    "subtitulo": "El reto críptico del día",
-    "descripcion": "Una definición en español que no es lo que parece.",
+    "subtitulo": "Los retos crípticos del día",
+    "descripcion": "Tres definiciones al día en español que no son lo que parecen.",
     "url": "https://joseleking.github.io/Trampantojo/",
     "color": "#8a7148",
     "icono": "icons/trampantojo.svg"
