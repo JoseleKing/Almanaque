@@ -79,5 +79,14 @@
     "url": "https://joseleking.github.io/Toponimia/",
     "color": "#B23A2E",
     "icono": "icons/toponimia.svg"
+  },
+  {
+    "id": "otrora",
+    "nombre": "Otrora",
+    "subtitulo": "Lo que las palabras fueron",
+    "descripcion": "Tres palabras que han cambiado de significado. Adivina qué querían decir antaño.",
+    "url": "https://joseleking.github.io/Otrora/",
+    "color": "#B42A1F",
+    "icono": "icons/otrora.svg"
   }
 ]
