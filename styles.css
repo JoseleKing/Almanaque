@@ -443,6 +443,11 @@ a.hoja__cuerpo:hover .hoja__mano {
   pointer-events: none;
 }
 
+.hoja__marcas--izquierda {
+  right: auto;
+  left: 0.8rem;
+}
+
 .marca {
   font-family: var(--fuente-versalitas);
   font-size: 0.78rem;

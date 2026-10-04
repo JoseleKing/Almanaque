@@ -36,7 +36,7 @@ JavaScript, sin dependencias ni compilación.
    - `id`: único, en minúsculas y sin espacios. Se usa para recordar si se ha jugado hoy.
    - `color`: color de acento de la hoja (nombre, filete superior y sello de «hecho»).
      En modo oscuro se aclara solo.
-   - `estado` es opcional: `"nuevo"` añade una etiqueta; `"proximamente"` muestra la hoja
+   - `estado` es opcional: `"nuevo"` añade una etiqueta en la esquina superior izquierda; `"proximamente"` muestra la hoja
      sin enlace (también se puede dejar `url` vacío). Bórralo cuando ya no haga falta.
    - El orden de las hojas es el del archivo.
 3. En el **repositorio del juego**, añade la mano ☜ para volver a Almanaque: copia

@@ -244,8 +244,14 @@
       cuerpo.appendChild(lineaResultado);
     }
 
+    // «Nuevo» va solo en la esquina de arriba a la izquierda; el resto de marcas, a la derecha.
+    if (estado === 'nuevo' && !proximamente) {
+      var nuevo = el('span', 'hoja__marcas hoja__marcas--izquierda');
+      nuevo.appendChild(el('span', 'marca marca--nuevo', 'Nuevo'));
+      cuerpo.appendChild(nuevo);
+    }
+
     var marcas = el('span', 'hoja__marcas');
-    if (estado === 'nuevo' && !proximamente) marcas.appendChild(el('span', 'marca marca--nuevo', 'Nuevo'));
     if (proximamente) marcas.appendChild(el('span', 'marca marca--proximamente', 'Próximamente'));
     if (hecho) marcas.appendChild(el('span', 'marca marca--hecho', 'Hecho'));
     if (marcas.childNodes.length) {
