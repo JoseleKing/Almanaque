@@ -7,6 +7,8 @@
   var CLAVE_ANTIGUA = 'almanaque:abiertos';
   var CLAVE_TEMA = 'almanaque:tema';
   var CLAVE_RESULTADOS = 'almanaque:resultados';
+  var CLAVE_ALTURA = 'almanaque:altura';
+  var VIGENCIA_ALTURA_MS = 6 * 60 * 60 * 1000;
 
   var hojasEl = document.getElementById('hojas');
   var avisoEl = document.getElementById('aviso');
@@ -171,6 +173,54 @@
     return linea;
   }
 
+  /* --- Volver a la misma altura ------------------------------------------ */
+
+  // Al entrar en un juego se apunta qué hoja era y a qué altura de la pantalla estaba.
+  // Al volver, la portada se carga de nuevo y empezaría arriba del todo: se pone esa
+  // misma hoja a la misma altura. Se coloca por la hoja y no por los píxeles
+  // desplazados, porque al volver puede haber crecido con el «Hecho» y el resultado.
+  function apuntarAltura(id, hoja) {
+    try {
+      window.sessionStorage.setItem(CLAVE_ALTURA, JSON.stringify({
+        id: id,
+        arriba: hoja.getBoundingClientRect().top,
+        cuando: Date.now()
+      }));
+    } catch (e) { /* sin almacenamiento: se vuelve arriba, como antes */ }
+  }
+
+  function tomarAltura() {
+    var datos = null;
+    try {
+      datos = JSON.parse(window.sessionStorage.getItem(CLAVE_ALTURA) || 'null');
+      window.sessionStorage.removeItem(CLAVE_ALTURA);
+    } catch (e) { /* datos corruptos o sin almacenamiento */ }
+    if (!datos || typeof datos.id !== 'string' || typeof datos.arriba !== 'number') return null;
+    if (!(Date.now() - datos.cuando < VIGENCIA_ALTURA_MS)) return null;
+    return datos;
+  }
+
+  function colocarHoja(datos) {
+    var hojas = hojasEl.querySelectorAll('.hoja');
+    for (var i = 0; i < hojas.length; i++) {
+      if (hojas[i].dataset.juego === datos.id) {
+        window.scrollTo(0, window.scrollY + hojas[i].getBoundingClientRect().top - datos.arriba);
+        return;
+      }
+    }
+  }
+
+  function volverALaAltura() {
+    var datos = tomarAltura();
+    if (!datos) return;
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+    colocarHoja(datos);
+    // Las fuentes pueden llegar después y cambiar la altura de las hojas: se recoloca.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { colocarHoja(datos); });
+    }
+  }
+
   /* --- Render ------------------------------------------------------------ */
 
   function el(etiqueta, clase, texto) {
@@ -206,6 +256,7 @@
     var hecho = !proximamente && (hechos.indexOf(juego.id) !== -1 || !!resultado);
 
     var li = el('li', 'hoja');
+    li.dataset.juego = juego.id;
     if (juego.color) li.style.setProperty('--acento', juego.color);
     if (proximamente) li.classList.add('hoja--proximamente');
     if (hecho) li.classList.add('hoja--hecho');
@@ -216,6 +267,10 @@
     } else {
       cuerpo = el('a', 'hoja__cuerpo');
       cuerpo.href = enlaceDesdeAlmanaque(juego.url, juego.id);
+      cuerpo.addEventListener('click', function (e) {
+        // Abierto en otra pestaña (Cmd, Ctrl, Mayús o botón central), aquí no se vuelve.
+        if (e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) apuntarAltura(juego.id, li);
+      });
     }
 
     var icono = el('img', 'hoja__icono');
@@ -291,6 +346,7 @@
         });
         if (!juegos.length) mostrarAviso('Todavía no hay juegos en el almanaque.');
         pintarHojas();
+        volverALaAltura();
       })
       .catch(function (err) {
         console.error('No se pudo cargar games.json', err);
@@ -306,7 +362,10 @@
   }
 
   window.addEventListener('pageshow', function (e) {
-    if (e.persisted) refrescar();
+    if (!e.persisted) return;
+    // Volviendo con «atrás», el navegador ya deja la página donde estaba.
+    tomarAltura();
+    refrescar();
   });
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') refrescar();
