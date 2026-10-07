@@ -87,7 +87,6 @@
     "descripcion": "Tres palabras que han cambiado de significado. Adivina qué querían decir antaño.",
     "url": "https://joseleking.github.io/Otrora/",
     "color": "#B42A1F",
-    "icono": "icons/otrora.svg",
-    "estado": "nuevo"
+    "icono": "icons/otrora.svg"
   }
 ]
