@@ -1,7 +1,7 @@
 # Almanaque
 
 Colección de juegos de palabras: la portada común de los juegos diarios en español
-(Calendas, Periplo, Mentidero, Trampantojo, Atlas, Gentilicio, Paremia, Relicario, Toponimia, Otrora). Es una PWA instalable hecha con HTML, CSS y
+(Calendas, Periplo, Mentidero, Trampantojo, Atlas, Gentilicio, Paremia, Relicario, Toponimia, Otrora, Chirimbolo). Es una PWA instalable hecha con HTML, CSS y
 JavaScript, sin dependencias ni compilación.
 
 ## Archivos

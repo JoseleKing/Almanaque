@@ -88,5 +88,15 @@
     "url": "https://joseleking.github.io/Otrora/",
     "color": "#B42A1F",
     "icono": "icons/otrora.svg"
+  },
+  {
+    "id": "chirimbolo",
+    "nombre": "Chirimbolo",
+    "subtitulo": "¿Cómo se llama esto?",
+    "descripcion": "Tres láminas al día con una parte señalada. ¿Sabes cómo se llama? Todo tiene nombre.",
+    "url": "https://joseleking.github.io/Chirimbolo/",
+    "color": "#a8322a",
+    "icono": "icons/chirimbolo.svg",
+    "estado": "nuevo"
   }
 ]
