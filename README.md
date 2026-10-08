@@ -47,10 +47,11 @@ JavaScript, sin dependencias ni compilación.
    <script src="volver-almanaque.js" defer></script>
    ```
 
-   Almanaque abre cada juego con `?desde=almanaque&juego=<id>`; solo entonces el juego
-   muestra una franja «☜ Almanaque» arriba, que se mantiene mientras siga abierta esa
-   pestaña. Quien entre al juego directamente no la ve. Si el juego guarda archivos para
-   jugar sin conexión, añade también `volver-almanaque.js` a esa lista. Si el juego pone
+   El juego muestra siempre una franja «☜ Regresar al Almanaque» arriba, se llegue desde
+   Almanaque o se entre directamente. Almanaque abre cada juego con
+   `?desde=almanaque&juego=<id>` para pasarle su id; si no, se toma de la ruta. Si el
+   juego guarda archivos para jugar sin conexión, añade también `volver-almanaque.js` a
+   esa lista. Si el juego pone
    versión a sus archivos (`app.js?v=3`), pónsela también a este
    (`volver-almanaque.js?v=2`) y súbela cada vez que lo actualices: si no, el navegador
    puede seguir usando la copia antigua.
@@ -88,8 +89,7 @@ JavaScript, sin dependencias ni compilación.
    <a class="boton" data-almanaque-volver hidden href="https://joseleking.github.io/Almanaque/">☜ Regresar al Almanaque</a>
    ```
 
-   `volver-almanaque.js` lo muestra solo si se llegó desde Almanaque y lo lleva al mismo
-   sitio que la mano ☜.
+   `volver-almanaque.js` lo muestra siempre y lo lleva al mismo sitio que la mano ☜.
 5. Modo claro u oscuro: todos los juegos siguen al que se elija en Almanaque (la clave
    `almanaque:tema` del `localStorage` compartido vale `light` o `dark`). Sin elección,
    modo luminoso: nada depende de `prefers-color-scheme`. En el juego, los colores oscuros
