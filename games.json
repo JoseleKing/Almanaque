@@ -98,5 +98,15 @@
     "color": "#a8322a",
     "icono": "icons/chirimbolo.svg",
     "estado": "nuevo"
+  },
+  {
+    "id": "gazapo",
+    "nombre": "Gazapo",
+    "subtitulo": "Cazadores de anacronismos",
+    "descripcion": "Un texto de otra época con tres palabras que no podían estar ahí. ¿Las cazas?",
+    "url": "https://joseleking.github.io/Gazapo/",
+    "color": "#a8321e",
+    "icono": "icons/gazapo.svg",
+    "estado": "nuevo"
   }
 ]
