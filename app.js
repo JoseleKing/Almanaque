@@ -355,8 +355,10 @@
   }
 
   // Al volver a la portada (botón atrás, cambiar de app, pasar la medianoche)
-  // se refrescan la fecha, las marcas de «hecho» y los resultados.
+  // se refrescan el tema (puede haberse cambiado en un juego), la fecha,
+  // las marcas de «hecho» y los resultados.
   function refrescar() {
+    aplicarTema(temaGuardado());
     pintarCabecera();
     if (juegos.length) pintarHojas();
   }
@@ -373,16 +375,20 @@
 
   /* --- Tema claro / oscuro ----------------------------------------------- */
 
-  function temaActual() {
-    var forzado = document.documentElement.dataset.theme;
-    if (forzado) return forzado;
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  // La elección se guarda en almanaque:tema y la leen también todos los juegos
+  // (comparten origen). Sin elección, modo luminoso.
+  function temaGuardado() {
+    return leer(CLAVE_TEMA) === 'dark' ? 'dark' : 'light';
+  }
+
+  function aplicarTema(tema) {
+    document.documentElement.dataset.theme = tema;
+    document.getElementById('color-tema').content = tema === 'dark' ? '#1c1813' : '#f3ead7';
   }
 
   document.getElementById('boton-tema').addEventListener('click', function () {
-    var nuevo = temaActual() === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = nuevo;
-    document.getElementById('color-tema').content = nuevo === 'dark' ? '#1c1813' : '#f3ead7';
+    var nuevo = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    aplicarTema(nuevo);
     guardar(CLAVE_TEMA, nuevo);
   });
 

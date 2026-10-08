@@ -90,7 +90,25 @@ JavaScript, sin dependencias ni compilación.
 
    `volver-almanaque.js` lo muestra solo si se llegó desde Almanaque y lo lleva al mismo
    sitio que la mano ☜.
-5. Sube los cambios a GitHub. Si quieres que quien tenga la app instalada vea el cambio
+5. Modo claro u oscuro: todos los juegos siguen al que se elija en Almanaque (la clave
+   `almanaque:tema` del `localStorage` compartido vale `light` o `dark`). Sin elección,
+   modo luminoso: nada depende de `prefers-color-scheme`. En el juego, los colores oscuros
+   van bajo `:root[data-theme="dark"]` y, en su `<head>`, tras la etiqueta `theme-color`:
+
+   ```html
+   <script>
+     try {
+       if (localStorage.getItem('almanaque:tema') === 'dark') {
+         document.documentElement.dataset.theme = 'dark';
+         document.querySelector('meta[name="theme-color"]').content = '#16202c';
+       }
+     } catch (e) {}
+   </script>
+   ```
+
+   Si el juego tiene su propio botón de tema, debe leer y guardar esa misma clave, con
+   `light` o `dark`, para que el cambio valga también en la portada y en los demás juegos.
+6. Sube los cambios a GitHub. Si quieres que quien tenga la app instalada vea el cambio
    también sin conexión, actualiza la versión de la caché (siguiente apartado).
 
 ## Actualizar la versión de la caché
