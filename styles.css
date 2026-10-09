@@ -142,9 +142,30 @@ body::before {
 }
 
 .portada__marca {
+  position: relative;
   width: min(40vw, 9.5rem);
-  height: auto;
   filter: drop-shadow(0 8px 14px var(--sombra));
+  animation: portada-temblor 0.25s ease-out 0.78s;
+}
+
+.portada__marca img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* La A cae sobre la hoja, se aplasta con el golpe y se asienta. */
+.portada__a {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.portada__a path {
+  transform-box: fill-box;
+  transform-origin: 50% 70%;
+  animation: portada-golpe 0.55s cubic-bezier(0.5, 0, 0.75, 0) 0.45s both;
 }
 
 .portada__nombre {
@@ -161,6 +182,37 @@ body::before {
   from {
     opacity: 0;
     transform: translateY(6px) scale(0.96);
+  }
+}
+
+@keyframes portada-golpe {
+  0% {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+  20% {
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: ease-out;
+  }
+  72% {
+    transform: scale(1.08, 0.9);
+  }
+  86% {
+    transform: scale(0.98, 1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes portada-temblor {
+  40% {
+    transform: translateY(2px);
   }
 }
 
@@ -654,7 +706,9 @@ a.hoja__cuerpo:hover .hoja__mano {
     transition: none !important;
   }
 
-  .portada__contenido {
+  .portada__contenido,
+  .portada__marca,
+  .portada__a path {
     animation: none;
   }
 }

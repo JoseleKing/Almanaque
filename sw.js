@@ -2,7 +2,7 @@
    Cambia CACHE_VERSION en cada publicación para que todos reciban la versión nueva
    (ver README). Los juegos se cargan desde su propia URL y no pasan por aquí. */
 
-const CACHE_VERSION = 'v26';
+const CACHE_VERSION = 'v27';
 const CACHE = `almanaque-${CACHE_VERSION}`;
 
 // Archivos de la portada que se guardan al instalar.
@@ -15,7 +15,7 @@ const ARCHIVOS = [
   './games.json',
   './manifest.json',
   './icons/almanaque.svg',
-  './icons/almanaque-marca.svg',
+  './icons/almanaque-marca-sin-a.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-192.png',

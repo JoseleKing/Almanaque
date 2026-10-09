@@ -42,7 +42,13 @@
 <body>
   <div class="portada" id="portada" aria-hidden="true">
     <div class="portada__contenido">
-      <img class="portada__marca" src="icons/almanaque-marca.svg" alt="" width="155" height="169">
+      <div class="portada__marca">
+        <img src="icons/almanaque-marca-sin-a.svg" alt="" width="155" height="169">
+        <!-- La A va aparte para estamparla sobre la hoja como un tipo de imprenta. -->
+        <svg class="portada__a" viewBox="26 22 155 169" aria-hidden="true">
+          <path d="M94 95 L106 95 L130 160 L115 160 Z M94 95 L97.5 95 L74.5 160 L71 160 Z M81.5 135.5 L109.5 135.5 L110.5 138.5 L80.5 138.5 Z M62 160 L85 160 L85 164 L62 164 Z M103 160 L141 160 L141 164 L103 164 Z" fill="#2B2420"/>
+        </svg>
+      </div>
       <p class="portada__nombre">Almanaque</p>
     </div>
   </div>
