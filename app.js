@@ -235,11 +235,38 @@
     var caja = document.getElementById('racha');
     document.getElementById('racha-cifra').textContent = racha.dias;
     caja.classList.toggle('racha--hoy', racha.hoy);
-    var dicho = 'Racha: ' + racha.dias + (racha.dias === 1 ? ' día seguido' : ' días seguidos') + ' jugando';
-    if (!racha.hoy) dicho += racha.dias ? '. Juega hoy para no perderla' : '. Juega hoy para empezarla';
-    caja.setAttribute('aria-label', dicho);
-    caja.title = dicho;
+    var dias = racha.dias + (racha.dias === 1 ? ' día seguido' : ' días seguidos');
+    caja.setAttribute('aria-label', 'Racha: ' + dias + '. Más información');
+    document.getElementById('racha-titulo').textContent = 'Racha de ' + dias;
+    var hoy;
+    if (racha.hoy) hoy = 'Hoy ya has jugado: la llama está encendida y la racha, a salvo.';
+    else if (racha.dias) hoy = 'Hoy aún no has jugado: juega antes de medianoche para no perderla.';
+    else hoy = 'Juega hoy a cualquier juego para empezarla.';
+    document.getElementById('racha-hoy').textContent = hoy;
   }
+
+  // Al tocar la racha se abre o cierra la nota que la explica.
+  var botonRacha = document.getElementById('racha');
+  var notaRacha = document.getElementById('racha-nota');
+
+  function mostrarNotaRacha(abrir) {
+    notaRacha.hidden = !abrir;
+    botonRacha.setAttribute('aria-expanded', String(abrir));
+  }
+
+  botonRacha.addEventListener('click', function () {
+    mostrarNotaRacha(notaRacha.hidden);
+  });
+  // Se cierra al tocar fuera o con Escape.
+  document.addEventListener('click', function (e) {
+    if (!notaRacha.hidden && !notaRacha.contains(e.target) && !botonRacha.contains(e.target)) mostrarNotaRacha(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !notaRacha.hidden) {
+      mostrarNotaRacha(false);
+      botonRacha.focus();
+    }
+  });
 
   /* --- Volver a la misma altura ------------------------------------------ */
 
