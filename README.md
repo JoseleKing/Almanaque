@@ -17,6 +17,11 @@ JavaScript, sin dependencias ni compilación.
 
 ## Añadir un juego
 
+El reto de cada juego cambia a medianoche en la hora local del jugador, no en la de
+Madrid: la portada cuenta los días igual (hojas hechas, resultados y racha común), y con
+otro criterio se descuadran fuera de España. Saca la fecha con `getFullYear()`,
+`getMonth()` y `getDate()`, sin `timeZone`.
+
 1. Guarda su icono en `icons/` (por ejemplo `icons/mijuego.svg`). Funciona mejor si es
    cuadrado, de 128 × 128 o más, y tiene su propio fondo.
 2. Añade una entrada al final de `games.json` (no olvides la coma tras la entrada anterior):
