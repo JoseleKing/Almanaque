@@ -8,6 +8,7 @@
   var CLAVE_TEMA = 'almanaque:tema';
   var CLAVE_RESULTADOS = 'almanaque:resultados';
   var CLAVE_ALTURA = 'almanaque:altura';
+  var CLAVE_DIAS = 'almanaque:dias';
   var VIGENCIA_ALTURA_MS = 6 * 60 * 60 * 1000;
 
   var hojasEl = document.getElementById('hojas');
@@ -36,7 +37,10 @@
   /* --- Fechas ------------------------------------------------------------ */
 
   function claveDeHoy() {
-    var d = new Date();
+    return claveDeFecha(new Date());
+  }
+
+  function claveDeFecha(d) {
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
 
@@ -171,6 +175,70 @@
     linea.setAttribute('role', 'img');
     linea.setAttribute('aria-label', dicho.join(', '));
     return linea;
+  }
+
+  /* --- Racha común ------------------------------------------------------- */
+
+  // Días (AAAA-MM-DD) en que se ha terminado alguna partida. Los apunta cada juego al
+  // llamar a almanaqueHecho (ver para-los-juegos/volver-almanaque.js) y, por si un juego
+  // aún tiene la copia antigua del script, también la portada con lo que ve de hoy.
+  function diasJugados() {
+    try {
+      var dias = JSON.parse(leer(CLAVE_DIAS) || '[]');
+      if (Array.isArray(dias)) {
+        return dias.filter(function (d) { return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d); });
+      }
+    } catch (e) { /* datos corruptos: se empieza de nuevo */ }
+    return [];
+  }
+
+  // Fechas que dejan las hojas hechas y los resultados guardados, aunque sean de otro día.
+  function diasALaVista() {
+    var vistos = [];
+    try {
+      var hechos = JSON.parse(leer(CLAVE_HECHOS) || 'null');
+      if (hechos && typeof hechos.fecha === 'string' && Array.isArray(hechos.ids) && hechos.ids.length) vistos.push(hechos.fecha);
+    } catch (e) { /* datos corruptos */ }
+    try {
+      var resultados = JSON.parse(leer(CLAVE_RESULTADOS) || 'null');
+      if (resultados && typeof resultados.fecha === 'string' && resultados.juegos && Object.keys(resultados.juegos).length) vistos.push(resultados.fecha);
+    } catch (e) { /* datos corruptos */ }
+    return vistos;
+  }
+
+  function apuntarDias() {
+    var dias = diasJugados();
+    var nuevos = diasALaVista().filter(function (d) {
+      return /^\d{4}-\d{2}-\d{2}$/.test(d) && dias.indexOf(d) === -1;
+    });
+    if (!nuevos.length) return dias;
+    dias = dias.concat(nuevos).sort();
+    guardar(CLAVE_DIAS, JSON.stringify(dias));
+    return dias;
+  }
+
+  // Días seguidos hasta hoy. Si hoy aún no se ha jugado, la racha de ayer sigue viva.
+  function calcularRacha(dias) {
+    var d = new Date();
+    var jugadoHoy = dias.indexOf(claveDeFecha(d)) !== -1;
+    if (!jugadoHoy) d.setDate(d.getDate() - 1);
+    var racha = 0;
+    while (dias.indexOf(claveDeFecha(d)) !== -1) {
+      racha++;
+      d.setDate(d.getDate() - 1);
+    }
+    return { dias: racha, hoy: jugadoHoy };
+  }
+
+  function pintarRacha() {
+    var racha = calcularRacha(apuntarDias());
+    var caja = document.getElementById('racha');
+    document.getElementById('racha-cifra').textContent = racha.dias;
+    caja.classList.toggle('racha--hoy', racha.hoy);
+    var dicho = 'Racha: ' + racha.dias + (racha.dias === 1 ? ' día seguido' : ' días seguidos') + ' jugando';
+    if (!racha.hoy) dicho += racha.dias ? '. Juega hoy para no perderla' : '. Juega hoy para empezarla';
+    caja.setAttribute('aria-label', dicho);
+    caja.title = dicho;
   }
 
   /* --- Volver a la misma altura ------------------------------------------ */
@@ -360,6 +428,7 @@
   function refrescar() {
     aplicarTema(temaGuardado());
     pintarCabecera();
+    pintarRacha();
     if (juegos.length) pintarHojas();
   }
 
@@ -409,6 +478,7 @@
 
   recogerHecho();
   pintarCabecera();
+  pintarRacha();
   cargarJuegos();
 
   if ('serviceWorker' in navigator) {

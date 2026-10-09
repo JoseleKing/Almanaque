@@ -78,7 +78,12 @@ JavaScript, sin dependencias ni compilación.
    `total` (o la cifra `2/12` si son más de diez); `texto` es libre y corto (hasta 40
    caracteres). El resultado se guarda en el `localStorage` que comparten todos los
    juegos de `joseleking.github.io`, así que llega y marca la hoja aunque el jugador no
-   vuelva con la mano ☜. Se borra solo al cambiar de día. Si el juego no está en
+   vuelva con la mano ☜. Se borra solo al cambiar de día.
+
+   Cada llamada a `almanaqueHecho` apunta además el día en `almanaque:dias` (lista de
+   fechas `AAAA-MM-DD`). De ahí sale la racha común que la portada muestra junto al botón
+   de tema: días seguidos en que se ha terminado una partida de cualquier juego. Si hoy
+   aún no se ha jugado, la llama sale apagada y la racha de ayer sigue contando. Si el juego no está en
    `joseleking.github.io/<Nombre>/`, el id se toma de la ruta en minúsculas: debe coincidir
    con el de `games.json`.
 
@@ -145,9 +150,9 @@ Service Workers (o Network → Offline) y recarga.
 
 Visita `/reiniciar/` (por ejemplo <https://joseleking.github.io/Almanaque/reiniciar/>) y
 pulsa «Borrar todo». Borra las partidas, rachas y estadísticas de todos los juegos y las
-hojas hechas y los resultados de hoy de la portada, en ese navegador: todo lo que esté
-guardado bajo `<id>:…` (con los `id` de `games.json`) y las claves `almanaque:hechos` y
-`almanaque:resultados`. El modo claro u oscuro de cada juego se conserva (las claves que
+hojas hechas, los resultados de hoy y la racha común de la portada, en ese navegador:
+todo lo que esté guardado bajo `<id>:…` (con los `id` de `games.json`) y las claves
+`almanaque:hechos`, `almanaque:resultados` y `almanaque:dias`. El modo claro u oscuro de cada juego se conserva (las claves que
 acaban en `:tema`). Funciona porque todos los juegos comparten origen
 (`joseleking.github.io`); en local solo alcanza a los juegos servidos desde el mismo
 `localhost:puerto`. Un juego nuevo queda incluido solo si guarda bajo `<id>:`.

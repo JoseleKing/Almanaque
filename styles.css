@@ -15,6 +15,7 @@
   --sombra: rgba(70, 45, 15, 0.35);
   --grano-opacidad: 0.55;
   --aclarar-acento: 0%;
+  --rubrica: #a8401f;
 
   --fuente-titulo: "IM Fell DW Pica", "IM Fell English", Georgia, "Times New Roman", serif;
   --fuente-versalitas: "IM Fell DW Pica SC", "IM Fell DW Pica", Georgia, serif;
@@ -35,6 +36,7 @@
     --sombra: rgba(0, 0, 0, 0.6);
     --grano-opacidad: 0.25;
     --aclarar-acento: 45%;
+    --rubrica: #e2875c;
     color-scheme: dark;
   }
 }
@@ -50,6 +52,7 @@
   --sombra: rgba(0, 0, 0, 0.6);
   --grano-opacidad: 0.25;
   --aclarar-acento: 45%;
+  --rubrica: #e2875c;
   color-scheme: dark;
 }
 
@@ -271,6 +274,58 @@ body::before {
 .tema:focus-visible {
   outline: 2px solid var(--tinta);
   outline-offset: 3px;
+}
+
+/* Racha común: días seguidos con alguna partida, a la izquierda del botón de tema.
+   La llama se enciende cuando ya se ha jugado hoy. */
+.racha {
+  position: absolute;
+  top: 0;
+  right: 3.25rem;
+  height: 2.75rem;
+  margin: 0;
+  padding: 0 0.85rem 0 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--regla-suave);
+  border-radius: 1.375rem;
+  background: var(--hoja);
+  color: var(--tinta-suave);
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: default;
+}
+
+.racha__icono {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+}
+
+.racha__cifra {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* En pantallas estrechas los dos botones pisarían el antetítulo: este baja. */
+@media (max-width: 34rem) {
+  .cabecera {
+    padding-top: 3.6rem;
+  }
+}
+
+.racha--hoy {
+  color: var(--tinta);
+}
+
+.racha--hoy .racha__icono {
+  fill: var(--rubrica);
+  fill-rule: evenodd;
+  stroke: var(--rubrica);
 }
 
 /* --- Hojas (tarjetas de juego) ------------------------------------------- */
