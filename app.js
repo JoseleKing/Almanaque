@@ -544,7 +544,11 @@
     if (esNavegadorInterno(ua)) {
       return 'Desde aquí no se puede instalar. Abre esta página en tu navegador (en el menú {puntos} de la app suele aparecer «Abrir en el navegador») y pulsa de nuevo «Instalar Almanaque».';
     }
-    // En Safari, «Compartir» está en la barra (iPad, iOS antiguos) o dentro del menú ··· (iPhone reciente).
+    // En Safari del iPhone, «Compartir» está dentro del menú ···, y «Añadir a pantalla de inicio», en «Más».
+    if (ios && !/CriOS|FxiOS|EdgiOS/.test(ua) && /iPhone|iPod/.test(ua)) {
+      return 'Toca el menú {puntos}, luego Compartir {compartir}, después «Más» {puntos} y, por último, «Añadir a pantalla de inicio».';
+    }
+    // En Safari del iPad, «Compartir» suele estar en la barra.
     if (ios && !/CriOS|FxiOS|EdgiOS/.test(ua)) {
       return 'Toca Compartir {compartir} (en la barra o dentro del menú {puntos}) y luego «Añadir a pantalla de inicio».';
     }
