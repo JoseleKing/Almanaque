@@ -1,0 +1,13 @@
+{
+  "name": "almanaque-herramientas",
+  "private": true,
+  "description": "Genera la imagen para compartir y las capturas del manifiesto (ver README).",
+  "scripts": {
+    "compartir": "node imagen-compartir.js",
+    "capturas": "node capturas-manifiesto.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0",
+    "sharp": "^0.33.5"
+  }
+}

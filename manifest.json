@@ -1,7 +1,7 @@
 {
   "name": "Almanaque",
   "short_name": "Almanaque",
-  "description": "Cajón de sastre de juegos de palabras en español.",
+  "description": "Juegos diarios de palabras para curiosos de la lengua española: etimologías, refranes, gentilicios, topónimos y más.",
   "lang": "es",
   "dir": "ltr",
   "id": "./",
@@ -18,5 +18,9 @@
     { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
     { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
     { "src": "icons/almanaque.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "screenshots": [
+    { "src": "icons/captura-movil.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "La portada del almanaque con los juegos del día" },
+    { "src": "icons/captura-escritorio.png", "sizes": "1920x1080", "type": "image/png", "form_factor": "wide", "label": "La portada del almanaque con los juegos del día, en el ordenador" }
   ]
 }

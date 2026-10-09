@@ -233,6 +233,9 @@
   function pintarRacha() {
     var racha = calcularRacha(apuntarDias());
     var caja = document.getElementById('racha');
+    // Sin racha no hay nada que contar: el botón no sale hasta el primer día jugado.
+    caja.hidden = !racha.dias;
+    if (!racha.dias) mostrarNotaRacha(false);
     document.getElementById('racha-cifra').textContent = racha.dias;
     caja.classList.toggle('racha--hoy', racha.hoy);
     var dias = racha.dias + (racha.dias === 1 ? ' día seguido' : ' días seguidos');
@@ -517,24 +520,40 @@
       window.navigator.standalone === true;
   }
 
+  // Navegadores internos de las apps (Instagram, Facebook, TikTok…), que no instalan.
+  // Basta con añadir aquí la marca que deja cada app en el userAgent.
+  var NAVEGADORES_INTERNOS = ['Instagram', 'FBAN', 'FBAV', 'FB_IAB', 'musical_ly',
+    'BytedanceWebview', 'Line/', 'Snapchat', 'LinkedInApp'];
+
+  function esNavegadorInterno(ua) {
+    return NAVEGADORES_INTERNOS.some(function (marca) { return ua.indexOf(marca) !== -1; });
+  }
+
+  // El iPad se presenta como un Mac, pero tiene pantalla táctil.
+  function esIOS(ua) {
+    return /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  }
+
   function pasosParaInstalar() {
     var ua = navigator.userAgent;
-    // El iPad se presenta como un Mac, pero tiene pantalla táctil.
-    var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    var ios = esIOS(ua);
     var android = /Android/.test(ua);
     var firefox = /Firefox|FxiOS/.test(ua);
     var safariMac = /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg|Firefox/.test(ua);
 
-    // En Safari del iPhone, «Compartir» está dentro del botón de los tres puntos.
+    if (esNavegadorInterno(ua)) {
+      return 'Desde aquí no se puede instalar. Abre esta página en tu navegador (en el menú {puntos} de la app suele aparecer «Abrir en el navegador») y pulsa de nuevo «Instalar Almanaque».';
+    }
+    // En Safari, «Compartir» está en la barra (iPad, iOS antiguos) o dentro del menú ··· (iPhone reciente).
     if (ios && !/CriOS|FxiOS|EdgiOS/.test(ua)) {
-      return 'Pulsa {puntos}, selecciona «Compartir» y, en «Más» {puntos}, clica en «Añadir a pantalla de inicio».';
+      return 'Toca Compartir {compartir} (en la barra o dentro del menú {puntos}) y luego «Añadir a pantalla de inicio».';
     }
     // En Chrome del iPhone, «Compartir» está en la barra de direcciones.
     if (ios && /CriOS/.test(ua)) {
-      return 'Toca el botón Compartir {compartir}, pulsa «Más» {puntos} y selecciona «Añadir a pantalla de inicio».';
+      return 'Toca Compartir {compartir} en la barra de direcciones, luego «Más» {puntos} y, por último, «Añadir a pantalla de inicio».';
     }
     if (ios) {
-      return 'Toca el botón Compartir {compartir} (en Safari puede estar en el menú {puntos}) y elige «Añadir a pantalla de inicio».';
+      return 'Toca Compartir {compartir} (en Safari puede estar dentro del menú {puntos}) y luego «Añadir a pantalla de inicio».';
     }
     if (safariMac) {
       return 'En la barra de menús, abre «Archivo» y elige «Añadir al Dock».';
@@ -617,6 +636,8 @@
       return;
     }
     pintarPasos(document.getElementById('instalar-pasos'), pasosParaInstalar());
+    // En iOS la app instalada guarda sus datos aparte de los del navegador.
+    document.getElementById('instalar-ios').hidden = !esIOS(navigator.userAgent);
     mostrarNotaInstalar(notaInstalar.hidden);
   });
 

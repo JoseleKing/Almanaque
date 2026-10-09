@@ -4,7 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Almanaque</title>
-  <meta name="description" content="Almanaque: cajón de sastre de juegos de palabras en español.">
+  <meta name="description" content="Juegos diarios de palabras para curiosos de la lengua española: etimologías, refranes, gentilicios, topónimos y más.">
+  <link rel="canonical" href="https://joseleking.github.io/Almanaque/">
+
+  <!-- Vista previa al compartir el enlace. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Almanaque">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Almanaque · Juegos diarios de palabras">
+  <meta property="og:description" content="Juegos diarios de palabras para curiosos de la lengua española: etimologías, refranes, gentilicios, topónimos y más.">
+  <meta property="og:url" content="https://joseleking.github.io/Almanaque/">
+  <meta property="og:image" content="https://joseleking.github.io/Almanaque/icons/almanaque-compartir.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo y nombre de Almanaque sobre papel antiguo">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#f3ead7" id="color-tema">
   <meta name="color-scheme" content="light dark">
 
@@ -55,7 +69,7 @@
 
   <div class="pagina">
     <header class="cabecera">
-      <button class="racha" type="button" id="racha" aria-expanded="false" aria-controls="racha-nota" aria-label="Racha: 0 días seguidos">
+      <button class="racha" type="button" id="racha" hidden aria-expanded="false" aria-controls="racha-nota" aria-label="Racha: 0 días seguidos">
         <svg class="racha__icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c-4.4 0-7-3-7-6.6 0-3.8 2.9-5.8 4.4-8.8.6 2 1.5 3 2.6 3.4-.4-3.4 1-6.2 3-8 .4 3.6 4 6.6 4 12.6 0 4.4-2.6 7.4-7 7.4zm0-2c1.8 0 3-1.3 3-3 0-1.8-.4-3.4-1.6-4.6.2.8.2 1.6-.2 2.4-.8-.2-1.6-.8-2-2.2C10.4 14.2 9 15.2 9 17c0 1.7 1.2 3 3 3z"/></svg>
         <span class="racha__cifra" id="racha-cifra">0</span>
       </button>
@@ -91,6 +105,7 @@
         <div class="instalar__nota" id="instalar-nota" hidden>
           <p class="instalar__nota-titulo">Cómo instalarlo</p>
           <p id="instalar-pasos"></p>
+          <p class="instalar__nota-aviso" id="instalar-ios" hidden>Ojo: en el iPhone y el iPad, la app instalada empieza de cero; tu racha y tus partidas de este navegador no se guardarán.</p>
         </div>
       </div>
     </main>

@@ -350,6 +350,10 @@ body::before {
   cursor: pointer;
 }
 
+.racha[hidden] {
+  display: none;
+}
+
 .racha:focus-visible {
   outline: 2px solid var(--tinta);
   outline-offset: 3px;
@@ -723,7 +727,8 @@ a.hoja__cuerpo:hover .hoja__mano {
   line-height: 1.4;
 }
 
-.instalar__nota[hidden] {
+.instalar__nota[hidden],
+.instalar__nota-aviso[hidden] {
   display: none;
 }
 
@@ -733,6 +738,13 @@ a.hoja__cuerpo:hover .hoja__mano {
 
 .instalar__nota p + p {
   margin-top: 0.5rem;
+}
+
+/* Aviso del almacenamiento aparte en iOS, bajo los pasos. */
+.instalar__nota-aviso {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--tinta-suave);
 }
 
 /* Dibujos de los botones del navegador, dentro del texto de los pasos. */

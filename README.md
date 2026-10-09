@@ -13,6 +13,7 @@ JavaScript, sin dependencias ni compilación.
 | `index.html`, `styles.css`, `app.js` | La portada. No hay que tocarlos para añadir juegos. |
 | `manifest.json`, `sw.js` | PWA: instalación y funcionamiento sin conexión. |
 | `reiniciar/index.html` | Página para borrar el progreso de todos los juegos (para pruebas). |
+| `herramientas/` | Scripts para regenerar la imagen para compartir y las capturas del manifiesto. |
 
 ## Añadir un juego
 
@@ -83,7 +84,9 @@ JavaScript, sin dependencias ni compilación.
    Cada llamada a `almanaqueHecho` apunta además el día en `almanaque:dias` (lista de
    fechas `AAAA-MM-DD`). De ahí sale la racha común que la portada muestra junto al botón
    de tema: días seguidos en que se ha terminado una partida de cualquier juego. Si hoy
-   aún no se ha jugado, la llama sale apagada y la racha de ayer sigue contando. Si el juego no está en
+   aún no se ha jugado, la llama sale apagada y la racha de ayer sigue contando. Mientras
+   la racha sea 0 el botón no se muestra (el de tema no se mueve) y aparece en cuanto se
+   juega, también al volver de un juego sin recargar. Si el juego no está en
    `joseleking.github.io/<Nombre>/`, el id se toma de la ruta en minúsculas: debe coincidir
    con el de `games.json`.
 
@@ -115,6 +118,46 @@ JavaScript, sin dependencias ni compilación.
    `light` o `dark`, para que el cambio valga también en la portada y en los demás juegos.
 6. Sube los cambios a GitHub. Si quieres que quien tenga la app instalada vea el cambio
    también sin conexión, actualiza la versión de la caché (siguiente apartado).
+
+## Instalar la app
+
+Bajo los juegos sale el botón «Instalar Almanaque», salvo si ya se está usando la app
+instalada. Lo que hace depende del navegador (ver `pasosParaInstalar` en `app.js`):
+
+- **Chrome, Edge y demás Chromium**: abre el diálogo de instalación del navegador.
+- **Navegadores internos de las redes** (Instagram, Facebook, TikTok, LINE, Snapchat,
+  LinkedIn): no se puede instalar desde ahí, así que la nota pide abrir la página en el
+  navegador. Se detectan por el `userAgent`; para añadir otra app, añade su marca a la
+  lista `NAVEGADORES_INTERNOS`.
+- **iPhone y iPad** (Safari, Chrome y otros): pasos para «Añadir a pantalla de inicio».
+- **Resto** (Safari en Mac, Firefox, Android sin aviso…): los pasos de cada uno.
+
+En iOS y iPadOS la app instalada tiene su propio almacenamiento, separado del del
+navegador: empieza con la racha a cero y sin partidas. Por eso, en esos dispositivos, la
+nota añade un aviso bajo los pasos. En Android y en el ordenador no ocurre.
+
+## Vista previa al compartir y capturas
+
+- `icons/almanaque-compartir.png` (1200 × 630) es la imagen de la vista previa del enlace
+  (etiquetas Open Graph y de Twitter en `index.html`).
+- `icons/captura-movil.png` (1080 × 1920) y `icons/captura-escritorio.png` (1920 × 1080)
+  son las capturas de `screenshots` en `manifest.json`: con ellas y la descripción, Chrome
+  muestra un diálogo de instalación más rico.
+
+Ninguna va en `ARCHIVOS` de `sw.js`: no hacen falta sin conexión. Para regenerarlas
+(por ejemplo, tras cambiar la portada o añadir un juego), con Node y Google Chrome
+instalados y conexión para las tipografías:
+
+```sh
+cd herramientas
+npm install
+npm run compartir   # icons/almanaque-compartir.png
+npm run capturas    # icons/captura-movil.png e icons/captura-escritorio.png
+```
+
+Las capturas se hacen en modo claro, con una racha de cinco días y dos hojas hechas con
+resultado. Los scripts comprimen las imágenes y avisan si la de compartir pasa de 300 KB
+o alguna captura de 400 KB.
 
 ## Actualizar la versión de la caché
 
