@@ -676,6 +676,79 @@ a.hoja__cuerpo:hover .hoja__mano {
   color: var(--tinta-suave);
 }
 
+/* --- Instalar ------------------------------------------------------------ */
+
+.instalar {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.instalar[hidden] {
+  display: none;
+}
+
+.instalar__boton {
+  min-height: 2.75rem;
+  padding: 0.45rem 1.4rem;
+  border: 1px solid var(--regla);
+  border-radius: 1.375rem;
+  background: var(--hoja);
+  box-shadow: 0 8px 16px -12px var(--sombra);
+  color: var(--tinta);
+  font-family: var(--fuente-versalitas);
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.instalar__boton:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 3px;
+}
+
+/* Pasos a mano, para los navegadores que no dejan instalar desde la página. */
+.instalar__nota {
+  width: min(24rem, 100%);
+  padding: 0.85rem 1rem 0.9rem;
+  border: 1px solid var(--regla);
+  background: var(--hoja);
+  box-shadow:
+    inset 0 0 0 4px var(--hoja),
+    inset 0 0 0 5px var(--regla-suave),
+    0 12px 22px -12px var(--sombra);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.instalar__nota[hidden] {
+  display: none;
+}
+
+.instalar__nota p {
+  margin: 0;
+}
+
+.instalar__nota p + p {
+  margin-top: 0.5rem;
+}
+
+/* Dibujos de los botones del navegador, dentro del texto de los pasos. */
+.instalar__icono {
+  width: auto;
+  height: 1.35em;
+  margin: 0 0.1em;
+  vertical-align: -0.3em;
+  fill: currentColor;
+}
+
+.instalar__nota-titulo {
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+}
+
 /* --- Pie ----------------------------------------------------------------- */
 
 .pie {

@@ -84,6 +84,15 @@
       <h2 class="visualmente-oculto">Juegos</h2>
       <ol class="hojas" id="hojas" aria-live="polite"></ol>
       <p class="aviso" id="aviso" hidden></p>
+
+      <!-- Solo se muestra si la app no está ya instalada (ver app.js). -->
+      <div class="instalar" id="instalar" hidden>
+        <button class="instalar__boton" type="button" id="boton-instalar" aria-expanded="false" aria-controls="instalar-nota">Instalar Almanaque</button>
+        <div class="instalar__nota" id="instalar-nota" hidden>
+          <p class="instalar__nota-titulo">Cómo instalarlo</p>
+          <p id="instalar-pasos"></p>
+        </div>
+      </div>
     </main>
 
     <footer class="pie">

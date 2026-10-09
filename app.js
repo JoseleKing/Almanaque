@@ -501,6 +501,125 @@
     });
   }
 
+  /* --- Instalar la app --------------------------------------------------- */
+
+  // Chrome, Edge, Samsung Internet y demás Chromium (Android y ordenador) avisan con
+  // beforeinstallprompt y dejan abrir su cuadro de instalación desde el botón.
+  // Safari y Firefox no lo permiten: el botón muestra los pasos a mano.
+  var instalarEl = document.getElementById('instalar');
+  var botonInstalar = document.getElementById('boton-instalar');
+  var notaInstalar = document.getElementById('instalar-nota');
+  var avisoInstalacion = null;
+
+  function yaInstalada() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+      window.matchMedia('(display-mode: fullscreen)').matches ||
+      window.navigator.standalone === true;
+  }
+
+  function pasosParaInstalar() {
+    var ua = navigator.userAgent;
+    // El iPad se presenta como un Mac, pero tiene pantalla táctil.
+    var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    var android = /Android/.test(ua);
+    var firefox = /Firefox|FxiOS/.test(ua);
+    var safariMac = /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg|Firefox/.test(ua);
+
+    // En Safari del iPhone, «Compartir» está dentro del botón de los tres puntos.
+    if (ios && !/CriOS|FxiOS|EdgiOS/.test(ua)) {
+      return 'Pulsa {puntos}, selecciona «Compartir» y, en «Más» {puntos}, clica en «Añadir a pantalla de inicio».';
+    }
+    // En Chrome del iPhone, «Compartir» está en la barra de direcciones.
+    if (ios && /CriOS/.test(ua)) {
+      return 'Toca el botón Compartir {compartir}, pulsa «Más» {puntos} y selecciona «Añadir a pantalla de inicio».';
+    }
+    if (ios) {
+      return 'Toca el botón Compartir {compartir} (en Safari puede estar en el menú {puntos}) y elige «Añadir a pantalla de inicio».';
+    }
+    if (safariMac) {
+      return 'En la barra de menús, abre «Archivo» y elige «Añadir al Dock».';
+    }
+    if (firefox && android) {
+      return 'Abre el menú de Firefox (⋮) y elige «Añadir a la pantalla de inicio» o «Instalar».';
+    }
+    if (firefox) {
+      return 'Firefox para ordenador no instala aplicaciones web. Abre esta página en Chrome, Edge o Safari y pulsa de nuevo «Instalar Almanaque».';
+    }
+    if (android) {
+      return 'Abre el menú del navegador (⋮) y elige «Instalar aplicación» o «Añadir a pantalla de inicio».';
+    }
+    return 'Busca el icono de instalar a la derecha de la barra de direcciones, o abre el menú del navegador (⋮) y elige «Instalar Almanaque».';
+  }
+
+  // Dibujos de los botones que se nombran en los pasos, como {puntos} o {compartir}.
+  var ICONOS = {
+    puntos: {
+      nombre: 'el botón de los tres puntos',
+      dibujo: '<circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.2"/>' +
+        '<circle cx="7" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="17" cy="12" r="1.6"/>'
+    },
+    compartir: {
+      nombre: 'el botón Compartir',
+      caja: '5 0 14 24',
+      dibujo: '<path d="M8.5 9H6.5v12h11V9h-2M12 2.5v12M8.5 6 12 2.5 15.5 6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>'
+    }
+  };
+
+  // Escribe los pasos y cambia cada {nombre} por el dibujo de su botón.
+  function pintarPasos(destino, texto) {
+    destino.textContent = '';
+    texto.split(/\{(\w+)\}/).forEach(function (trozo, i) {
+      if (i % 2 === 0) {
+        destino.appendChild(document.createTextNode(trozo));
+        return;
+      }
+      var icono = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      icono.setAttribute('class', 'instalar__icono');
+      icono.setAttribute('viewBox', ICONOS[trozo].caja || '0 0 24 24');
+      icono.setAttribute('role', 'img');
+      icono.setAttribute('aria-label', ICONOS[trozo].nombre);
+      icono.innerHTML = ICONOS[trozo].dibujo;
+      destino.appendChild(icono);
+    });
+  }
+
+  function mostrarNotaInstalar(abrir) {
+    notaInstalar.hidden = !abrir;
+    botonInstalar.setAttribute('aria-expanded', String(abrir));
+  }
+
+  function ocultarInstalar() {
+    instalarEl.hidden = true;
+    mostrarNotaInstalar(false);
+  }
+
+  if (!yaInstalada()) instalarEl.hidden = false;
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    avisoInstalacion = e;
+  });
+
+  window.addEventListener('appinstalled', function () {
+    avisoInstalacion = null;
+    ocultarInstalar();
+  });
+
+  botonInstalar.addEventListener('click', function () {
+    if (avisoInstalacion) {
+      var aviso = avisoInstalacion;
+      // El aviso solo sirve una vez; si se rechaza, el navegador manda otro más adelante.
+      avisoInstalacion = null;
+      aviso.prompt();
+      aviso.userChoice.then(function (eleccion) {
+        if (eleccion.outcome === 'accepted') ocultarInstalar();
+      });
+      return;
+    }
+    pintarPasos(document.getElementById('instalar-pasos'), pasosParaInstalar());
+    mostrarNotaInstalar(notaInstalar.hidden);
+  });
+
   /* --- Arranque ---------------------------------------------------------- */
 
   recogerHecho();
