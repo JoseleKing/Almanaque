@@ -24,9 +24,12 @@
    «Siguiente juego: Periplo ☞» con las mismas clases, así que toma el estilo del juego.
    Almanaque completo: con todas las hojas de hoy hechas (también la de este juego), la
    franja dice en su lugar «✓ Almanaque completo» y lleva a la portada, donde espera el
-   sello del día; en la pantalla final no sale botón de siguiente. En el juego que acaba
-   el almanaque, al llamar a almanaqueHecho, cae confeti con los colores de los juegos
-   (una vez al día, apuntado en almanaque:confeti; nunca con movimiento reducido).
+   sello del día; en la pantalla final no sale botón de siguiente, sino el mismo sello
+   «Almanaque completo» de la portada, debajo del botón de volver (sin botón, al final
+   de la página), que también lleva a la portada. En el juego que acaba el almanaque, al
+   llamar a almanaqueHecho, cae confeti con los colores de los juegos y a la vez se
+   estampa el sello (una vez al día, apuntado en almanaque:confeti; con movimiento
+   reducido, ni confeti ni golpe: el sello sale quieto).
    Id del juego: Almanaque abre cada juego con ?desde=almanaque&juego=<id> y el id se
    recuerda en la pestaña para la ruta de ese juego; si no, sale de la ruta (/Periplo/ → periplo).
    Copia de referencia: se guarda en el repo de Almanaque, en para-los-juegos/.
@@ -86,6 +89,16 @@
   function claveDeHoy() {
     var d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function romano(n) {
+    var tabla = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'],
+      [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
+    var s = '';
+    for (var i = 0; i < tabla.length; i++) {
+      while (n >= tabla[i][0]) { s += tabla[i][1]; n -= tabla[i][0]; }
+    }
+    return s;
   }
 
   // Sin id de Almanaque, sale de la ruta: /Periplo/ → periplo.
@@ -282,9 +295,10 @@
         enlace.setAttribute('aria-label', 'Almanaque completo: volver a la portada');
       }
     }
+    var hecho = hechoHoy();
+    pintarSello(completo && hecho);
     // El almanaque se ha completado con la partida de esta página: se celebra.
     if (completo && terminadoAqui) celebrar();
-    var hecho = hechoHoy();
     var botones = document.querySelectorAll('[data-almanaque-siguiente]');
     for (var i = 0; i < botones.length; i++) {
       botones[i].hidden = !(j && hecho);
@@ -298,6 +312,61 @@
     }
   }
 
+  /* Sello de almanaque completo */
+
+  var selloCaja = null;
+
+  // El sello de la portada, debajo del último botón de volver de la pantalla final (o al
+  // final de la página si el juego no lo tiene). Se crea una vez y solo se mueve si hace
+  // falta: cada inserción despierta al vigilante de la página.
+  function pintarSello(mostrarlo) {
+    if (!mostrarlo) {
+      if (selloCaja) selloCaja.hidden = true;
+      return;
+    }
+    if (!selloCaja) selloCaja = crearSello();
+    selloCaja.hidden = false;
+    var sello = selloCaja.firstChild;
+    sello.href = destino();
+    var hoy = new Date();
+    var fecha = hoy.getDate() + ' · ' + romano(hoy.getMonth() + 1) + ' · ' + romano(hoy.getFullYear());
+    var linea = sello.querySelector('.almanaque-sello__fecha');
+    if (linea.textContent !== fecha) linea.textContent = fecha;
+    var volver = document.querySelectorAll('[data-almanaque-volver]');
+    var ancla = volver.length ? volver[volver.length - 1] : null;
+    if (ancla) {
+      if (ancla.nextSibling !== selloCaja) ancla.parentNode.insertBefore(selloCaja, ancla.nextSibling);
+    } else if (selloCaja.parentNode !== document.body || selloCaja.nextSibling) {
+      document.body.appendChild(selloCaja);
+    }
+  }
+
+  function crearSello() {
+    var caja = document.createElement('div');
+    caja.id = 'almanaque-sello-caja';
+    var sello = document.createElement('a');
+    sello.id = 'almanaque-sello';
+    sello.setAttribute('aria-label', 'Almanaque completo: todas las hojas de hoy hechas. Volver a la portada');
+    sello.addEventListener('click', function () { sello.href = destino(); });
+    sello.appendChild(trozo('almanaque-sello__titulo', 'Almanaque completo'));
+    sello.appendChild(trozo('almanaque-sello__fecha', ''));
+    caja.appendChild(sello);
+    return caja;
+  }
+
+  // Cae a la vez que el confeti. Si el sello queda fuera de la pantalla, antes se acerca.
+  function estamparSello() {
+    if (!selloCaja || selloCaja.hidden) return;
+    var sello = selloCaja.firstChild;
+    var caja = sello.getBoundingClientRect();
+    if ((caja.bottom > window.innerHeight || caja.top < 0) && sello.scrollIntoView) {
+      sello.scrollIntoView({ block: 'center' });
+    }
+    sello.classList.remove('almanaque-sello--estampar');
+    void sello.offsetWidth; // reinicia la animación
+    sello.classList.add('almanaque-sello--estampar');
+  }
+
   /* Confeti de almanaque completo */
 
   // Una vez al día: el juego vuelve a llamar a almanaqueHecho al abrirlo ya terminado.
@@ -308,6 +377,7 @@
     } catch (e) { return; /* sin almacenamiento no se sabría si ya se ha celebrado */ }
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (!window.requestAnimationFrame) return;
+    estamparSello();
     var colores = [];
     for (var c = 0; c < juegos.length; c++) {
       if (/^#[0-9a-f]{3,8}$/i.test(juegos[c].color || '')) colores.push(juegos[c].color);
@@ -462,7 +532,28 @@
       '#almanaque-siguiente:hover .almanaque-volver__mano{transform:translateX(3px)}' +
       // En pantallas estrechas, con las dos manos, «Regresar al» se cae para que quepan.
       '@media (max-width:36rem){.almanaque-franja--siguiente .almanaque-volver__largo{display:none}}' +
-      '@media (prefers-reduced-motion:reduce){#almanaque-franja .almanaque-volver__mano{transition:none}}';
+      // Sello de almanaque completo: el de la portada, con el rojo de tinta del logo.
+      // Al caer, el sello es más ancho que un móvil: lo que sobra no debe dar scroll lateral.
+      '#almanaque-sello-caja{display:flex;justify-content:center;width:100%;margin:1.4rem 0 1rem;overflow-x:clip}' +
+      '#almanaque-sello-caja[hidden]{display:none}' +
+      '#almanaque-sello{display:inline-flex;flex-direction:column;align-items:center;gap:.15rem;' +
+      'padding:.45rem 1.1rem .5rem;border:5px double #a33a2a;border-radius:3px;color:#a33a2a;' +
+      'font:inherit;line-height:1.1;text-decoration:none;transform:rotate(-4deg);opacity:.92;' +
+      '-webkit-tap-highlight-color:transparent;transition:opacity .18s ease}' +
+      ':root[data-theme="dark"] #almanaque-sello{color:#e58a76;border-color:#e58a76}' +
+      '#almanaque-sello:hover{opacity:1}' +
+      '#almanaque-sello:focus-visible{outline:2px solid currentColor;outline-offset:4px}' +
+      '.almanaque-sello__titulo{font-variant:small-caps;font-size:1.3rem;letter-spacing:.14em}' +
+      '.almanaque-sello__fecha{font-size:.85rem;letter-spacing:.12em;line-height:1}' +
+      // El mismo golpe que en la portada: cae grande, se aplasta y se asienta.
+      '.almanaque-sello--estampar{animation:almanaque-sello-golpe .6s cubic-bezier(.5,0,.75,0) both}' +
+      '@keyframes almanaque-sello-golpe{' +
+      '0%{opacity:0;transform:rotate(-4deg) scale(1.6)}20%{opacity:.55}' +
+      '60%{opacity:.92;transform:rotate(-4deg);animation-timing-function:ease-out}' +
+      '72%{transform:rotate(-4deg) scale(1.07,.9)}86%{transform:rotate(-4deg) scale(.98,1.02)}' +
+      '100%{opacity:.92;transform:rotate(-4deg)}}' +
+      '@media (prefers-reduced-motion:reduce){#almanaque-franja .almanaque-volver__mano{transition:none}' +
+      '.almanaque-sello--estampar{animation:none}}';
     document.head.appendChild(estilo);
 
     var franja = document.createElement('div');

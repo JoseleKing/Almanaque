@@ -119,9 +119,13 @@ otro criterio se descuadran fuera de España. Saca la fecha con `getFullYear()`,
    este juego, que debe estar hecha), la franja muestra a la derecha «✓ Almanaque
    completo» (en pantallas muy estrechas, «✓ Completo») en vez del siguiente juego, sin
    mano ☞, y lleva a la portada con `?hecho=<id>`, como la mano ☜. En la pantalla final
-   no sale botón de siguiente. En el juego que termina el almanaque cae confeti con los
-   colores de los juegos de `games.json` al llamar a `almanaqueHecho`: una vez al día
-   (se apunta en `almanaque:confeti`) y nunca con movimiento reducido.
+   no sale botón de siguiente, sino el sello «Almanaque completo» de la portada, debajo
+   del botón de volver (o al final de la página si el juego no tiene), que también lleva
+   a la portada; el contenedor es `#almanaque-sello-caja` y el sello, `#almanaque-sello`.
+   En el juego que termina el almanaque, al llamar a `almanaqueHecho`, cae confeti con
+   los colores de los juegos de `games.json` y a la vez se estampa el sello: una vez al
+   día (se apunta en `almanaque:confeti`). Con movimiento reducido no hay confeti y el
+   sello sale quieto.
    Sin conexión (sin `games.json`) no sale nada.
 
    Si el juego coloca algo encima de la franja (como el botón de ayuda de Otrora), la
