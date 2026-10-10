@@ -104,16 +104,23 @@ otro criterio se descuadran fuera de España. Saca la fecha con `getFullYear()`,
 
    `volver-almanaque.js` lo muestra siempre y lo lleva al mismo sitio que la mano ☜.
 
-   **Siguiente juego.** La franja ofrece siempre a la derecha «Siguiente: Periplo ☞»
+   **Siguiente juego.** La franja ofrece siempre a la derecha «Periplo ☞»
    (en pantallas estrechas, «Regresar al Almanaque» se acorta a «☜ Almanaque»). Con la
    partida de hoy terminada, el script pone además un botón «Siguiente juego: Periplo ☞»
    justo encima de cada botón de volver, con sus mismas clases, así que toma el estilo del
    juego sin tocar su HTML. Los dos llevan al primer juego que sigue en el orden de
    `games.json` y que aún no está hecho hoy (con vuelta al principio, y sin los de
-   «próximamente»); con todo hecho, o sin conexión, no salen. La lista se lee de
+   «próximamente»); sin conexión no salen. La lista se lee de
    `games.json` de Almanaque, así que un juego nuevo aparece solo. Para saber qué está
    hecho, `almanaqueHecho` apunta también la hoja en `almanaque:hechos`, la lista de la
    portada, que así la marca aunque no se vuelva con la mano ☜.
+
+   **Almanaque completo.** Cuando ya no queda ninguna hoja por hacer hoy (contando la de
+   este juego, que debe estar hecha), la franja muestra a la derecha «✓ Almanaque
+   completo» (en pantallas muy estrechas, «✓ Completo») en vez del siguiente juego, sin
+   mano ☞, y el botón de encima del de volver dice
+   «Almanaque completo ☜». Los dos llevan a la portada con `?hecho=<id>`, como la mano ☜.
+   Sin conexión (sin `games.json`) no sale nada.
 
    Si el juego coloca algo encima de la franja (como el botón de ayuda de Otrora), la
    franja entera es `#almanaque-franja`; dentro van `#almanaque-volver` y
@@ -142,6 +149,21 @@ otro criterio se descuadran fuera de España. Saca la fecha con `getFullYear()`,
    `light` o `dark`, para que el cambio valga también en la portada y en los demás juegos.
 6. Sube los cambios a GitHub. Si quieres que quien tenga la app instalada vea el cambio
    también sin conexión, actualiza la versión de la caché (siguiente apartado).
+
+## Almanaque completo
+
+Cuando todas las hojas jugables de hoy (las de `games.json` con `url` y sin
+`"proximamente"`) están hechas —por `almanaque:hechos` o por tener resultado de hoy en
+`almanaque:resultados`—, la portada estampa bajo la fecha un sello rojo «Almanaque
+completo» con la fecha en números romanos («10 · X · MMXXVI») y, debajo, la cuenta atrás
+hasta las hojas nuevas de medianoche («Hojas nuevas en 8 h 12 min»), que corre cada minuto
+mientras la página está a la vista. Al pasar la medianoche, la portada se repinta: sin
+sello y con las hojas sin hacer.
+
+El sello cae con el golpe de la A de la portada solo la primera vez que se ve completo
+cada día; ese día se apunta en `almanaque:completo` (`AAAA-MM-DD`) y las demás veces sale
+quieto (también siempre con movimiento reducido). Si se añade un juego a `games.json`
+durante el día, el sello desaparece hasta que se haga esa hoja.
 
 ## Instalar la app
 
@@ -219,7 +241,7 @@ Visita `/reiniciar/` (por ejemplo <https://joseleking.github.io/Almanaque/reinic
 pulsa «Borrar todo». Borra las partidas, rachas y estadísticas de todos los juegos y las
 hojas hechas, los resultados de hoy y la racha común de la portada, en ese navegador:
 todo lo que esté guardado bajo `<id>:…` (con los `id` de `games.json`) y las claves
-`almanaque:hechos`, `almanaque:resultados` y `almanaque:dias`. El modo claro u oscuro de cada juego se conserva (las claves que
+`almanaque:hechos`, `almanaque:resultados`, `almanaque:dias` y `almanaque:completo`. El modo claro u oscuro de cada juego se conserva (las claves que
 acaban en `:tema`). Funciona porque todos los juegos comparten origen
 (`joseleking.github.io`); en local solo alcanza a los juegos servidos desde el mismo
 `localhost:puerto`. Un juego nuevo queda incluido solo si guarda bajo `<id>:`.

@@ -9,6 +9,7 @@
   var CLAVE_RESULTADOS = 'almanaque:resultados';
   var CLAVE_ALTURA = 'almanaque:altura';
   var CLAVE_DIAS = 'almanaque:dias';
+  var CLAVE_COMPLETO = 'almanaque:completo';
   var VIGENCIA_ALTURA_MS = 6 * 60 * 60 * 1000;
 
   var hojasEl = document.getElementById('hojas');
@@ -425,6 +426,85 @@
     });
     hojasEl.replaceChildren(fragmento);
     diaPintado = claveDeHoy();
+    pintarCompleto(estaCompleto(hechos, resultados));
+  }
+
+  /* --- Almanaque completo ------------------------------------------------ */
+
+  // Todas las hojas jugables de hoy hechas (las mismas reglas que crearHoja). Si se añade
+  // un juego a games.json durante el día, deja de estar completo hasta hacer esa hoja.
+  function estaCompleto(hechos, resultados) {
+    var jugables = juegos.filter(function (j) {
+      return j.url && normalizarEstado(j.estado) !== 'proximamente';
+    });
+    return jugables.length > 0 && jugables.every(function (j) {
+      return hechos.indexOf(j.id) !== -1 || !!resultados[j.id];
+    });
+  }
+
+  var completoEl = document.getElementById('completo');
+  var selloEl = document.getElementById('sello');
+  var cuentaEl = document.getElementById('cuenta-atras');
+
+  function sinMovimiento() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  // El sello se estampa la primera vez que se ve completo cada día (se apunta en
+  // almanaque:completo); después, y con movimiento reducido, sale quieto.
+  function pintarCompleto(completo) {
+    var estabaOculto = completoEl.hidden;
+    completoEl.hidden = !completo;
+    if (!completo) {
+      selloEl.classList.remove('sello--estampar');
+      return;
+    }
+    var hoy = new Date();
+    document.getElementById('sello-fecha').textContent =
+      hoy.getDate() + ' · ' + romano(hoy.getMonth() + 1) + ' · ' + romano(hoy.getFullYear());
+    pintarCuentaAtras();
+    if (leer(CLAVE_COMPLETO) === claveDeHoy()) return;
+    guardar(CLAVE_COMPLETO, claveDeHoy());
+    if (!estabaOculto || sinMovimiento()) return;
+    // Si la portada fugaz aún tapa la página, el golpe espera a que se vaya.
+    var portada = document.getElementById('portada');
+    var tapada = portada && !document.documentElement.classList.contains('sin-portada');
+    selloEl.style.animationDelay = tapada ? '1.7s' : '';
+    selloEl.classList.add('sello--estampar');
+  }
+
+  /* --- Cuenta atrás hasta las hojas nuevas ------------------------------- */
+
+  // Hasta la próxima medianoche local, con fechas de calendario: así los días de cambio
+  // de hora duran lo que duran.
+  function textoCuentaAtras(ahora) {
+    var medianoche = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() + 1);
+    var minutos = Math.max(1, Math.ceil((medianoche - ahora) / 60000));
+    var horas = Math.floor(minutos / 60);
+    var resto = minutos % 60;
+    if (!horas) return 'Hojas nuevas en ' + resto + ' min';
+    return 'Hojas nuevas en ' + horas + ' h' + (resto ? ' ' + resto + ' min' : '');
+  }
+
+  function pintarCuentaAtras() {
+    var texto = textoCuentaAtras(new Date());
+    if (cuentaEl.textContent !== texto) cuentaEl.textContent = texto;
+  }
+
+  // Cada minuto, en punto y solo con la página a la vista: pasa la cuenta atrás y, al
+  // cambiar de día, repinta la portada (las hojas vuelven a salir sin hacer).
+  var latidoId = null;
+
+  function latir() {
+    window.clearTimeout(latidoId);
+    latidoId = null;
+    if (document.visibilityState === 'hidden') return;
+    var ahora = new Date();
+    latidoId = window.setTimeout(function () {
+      if (diaPintado && diaPintado !== claveDeHoy()) refrescar();
+      else if (!completoEl.hidden) pintarCuentaAtras();
+      latir();
+    }, 60000 - ahora.getSeconds() * 1000 - ahora.getMilliseconds() + 50);
   }
 
   function mostrarAviso(texto) {
@@ -467,9 +547,11 @@
     // Volviendo con «atrás», el navegador ya deja la página donde estaba.
     tomarAltura();
     refrescar();
+    latir();
   });
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') refrescar();
+    latir();
   });
 
   /* --- Tema claro / oscuro ----------------------------------------------- */
@@ -651,6 +733,7 @@
   pintarCabecera();
   pintarRacha();
   cargarJuegos();
+  latir();
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {

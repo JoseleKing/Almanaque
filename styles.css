@@ -16,6 +16,8 @@
   --grano-opacidad: 0.55;
   --aclarar-acento: 0%;
   --rubrica: #a8401f;
+  /* Rojo de tinta del logo, para el sello de «Almanaque completo». */
+  --sello: #a33a2a;
 
   --fuente-titulo: "IM Fell DW Pica", "IM Fell English", Georgia, "Times New Roman", serif;
   --fuente-versalitas: "IM Fell DW Pica SC", "IM Fell DW Pica", Georgia, serif;
@@ -37,6 +39,7 @@
     --grano-opacidad: 0.25;
     --aclarar-acento: 45%;
     --rubrica: #e2875c;
+    --sello: #e58a76;
     color-scheme: dark;
   }
 }
@@ -53,6 +56,7 @@
   --grano-opacidad: 0.25;
   --aclarar-acento: 45%;
   --rubrica: #e2875c;
+  --sello: #e58a76;
   color-scheme: dark;
 }
 
@@ -288,6 +292,87 @@ body::before {
   font-size: 0.95rem;
   font-style: italic;
   color: var(--tinta-suave);
+}
+
+/* Almanaque completo: sello de caucho bajo la fecha y cuenta atrás. */
+.completo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.85rem;
+}
+
+.completo[hidden] {
+  display: none;
+}
+
+/* Como el sello «Hecho» de las hojas, pero más grande y con doble filete. */
+.cabecera .sello {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  margin: 0.35rem 0 0.2rem;
+  padding: 0.45rem 1.1rem 0.5rem;
+  border: 5px double var(--sello);
+  border-radius: 3px;
+  color: var(--sello);
+  transform: rotate(-4deg);
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.sello__titulo {
+  font-family: var(--fuente-versalitas);
+  font-size: clamp(1.15rem, 5vw, 1.4rem);
+  letter-spacing: 0.14em;
+  line-height: 1.1;
+}
+
+.sello__fecha {
+  font-family: var(--fuente-titulo);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+
+/* El mismo gesto que la A de la portada: cae grande, se aplasta con el golpe y se asienta. */
+.sello--estampar {
+  animation: sello-golpe 0.6s cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+.completo__cuenta {
+  margin-top: 0.5rem !important;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--tinta-suave);
+  font-variant-numeric: lining-nums;
+}
+
+@keyframes sello-golpe {
+  0% {
+    opacity: 0;
+    transform: rotate(-4deg) scale(1.6);
+  }
+  20% {
+    opacity: 0.55;
+  }
+  60% {
+    opacity: 0.92;
+    transform: rotate(-4deg);
+    animation-timing-function: ease-out;
+  }
+  72% {
+    transform: rotate(-4deg) scale(1.07, 0.9);
+  }
+  86% {
+    transform: rotate(-4deg) scale(0.98, 1.02);
+  }
+  100% {
+    opacity: 0.92;
+    transform: rotate(-4deg);
+  }
 }
 
 /* Botón de tema: un pequeño sol o luna de grabado. */
@@ -793,7 +878,8 @@ a.hoja__cuerpo:hover .hoja__mano {
 
   .portada__contenido,
   .portada__marca,
-  .portada__a path {
+  .portada__a path,
+  .sello--estampar {
     animation: none;
   }
 }

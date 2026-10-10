@@ -19,9 +19,12 @@
    mano ☜. Puede pintarse en cualquier momento: el script vigila la página.
    Siguiente juego: la franja ofrece siempre a la derecha «Periplo ☞», que lleva
    al siguiente juego de Almanaque que aún no se ha hecho hoy (en el orden de games.json,
-   que se lee de Almanaque; sin conexión, o con todo hecho, no sale). Con la partida de hoy
-   terminada, el script pone además, justo encima de cada botón de volver, un botón
+   que se lee de Almanaque; sin conexión no sale). Con la partida de hoy terminada, el
+   script pone además, justo encima de cada botón de volver, un botón
    «Siguiente juego: Periplo ☞» con las mismas clases, así que toma el estilo del juego.
+   Almanaque completo: con todas las hojas de hoy hechas (también la de este juego), la
+   franja dice en su lugar «✓ Almanaque completo» y el botón, «Almanaque completo ☜»;
+   los dos llevan a la portada, donde espera el sello del día.
    Id del juego: Almanaque abre cada juego con ?desde=almanaque&juego=<id> y el id se
    recuerda en la pestaña para la ruta de ese juego; si no, sale de la ruta (/Periplo/ → periplo).
    Copia de referencia: se guarda en el repo de Almanaque, en para-los-juegos/.
@@ -247,34 +250,51 @@
     }
   }
 
+  // Con games.json cargado y ningún juego pendiente, contando este como hecho solo si lo está
+  // de verdad (siguientePendiente lo da por hecho para no ofrecerlo a sí mismo).
+  function almanaqueCompleto() {
+    return !!juegos && !!idDelJuego() && hechoHoy() && !siguientePendiente();
+  }
+
   // La franja lo ofrece siempre; los botones de la pantalla final, solo con la partida de
-  // hoy terminada en este juego.
+  // hoy terminada en este juego. Con todo hecho, los dos llevan a la portada.
+  // Los textos se escriben solo si cambian: escribirlos otra vez despertaría al vigilante
+  // de la página sin fin.
   function actualizarSiguiente() {
     var j = siguientePendiente();
+    var completo = !j && almanaqueCompleto();
     var enlace = document.getElementById('almanaque-siguiente');
     if (enlace) {
-      enlace.hidden = !j;
+      enlace.hidden = !j && !completo;
       var franja = document.getElementById('almanaque-franja');
-      if (franja) franja.classList.toggle('almanaque-franja--siguiente', !!j);
+      if (franja) franja.classList.toggle('almanaque-franja--siguiente', !!j || completo);
+      enlace.classList.toggle('almanaque-siguiente--completo', completo);
       if (j) {
         enlace.href = direccionDe(j);
-        // Solo si cambia: escribirlo otra vez despertaría al vigilante de la página sin fin.
         var nombre = enlace.querySelector('.almanaque-siguiente__nombre');
         if (nombre.textContent !== j.nombre) nombre.textContent = j.nombre;
         enlace.setAttribute('aria-label', 'Siguiente juego: ' + j.nombre);
+      } else if (completo) {
+        enlace.href = destino();
+        enlace.setAttribute('aria-label', 'Almanaque completo: volver a la portada');
       }
     }
     var hecho = hechoHoy();
     var botones = document.querySelectorAll('[data-almanaque-siguiente]');
     for (var i = 0; i < botones.length; i++) {
-      botones[i].hidden = !(j && hecho);
+      botones[i].hidden = !((j || completo) && hecho);
+      var texto = null;
       if (j) {
         botones[i].href = direccionDe(j);
         // Con la mano ☞, como la ☜ del botón de volver.
-        var texto = 'Siguiente juego: ' + j.nombre + ' ☞';
-        if (botones[i].textContent !== texto) botones[i].textContent = texto;
+        texto = 'Siguiente juego: ' + j.nombre + ' ☞';
         botones[i].setAttribute('aria-label', 'Siguiente juego: ' + j.nombre);
+      } else if (completo) {
+        botones[i].href = destino();
+        texto = 'Almanaque completo ☜';
+        botones[i].setAttribute('aria-label', 'Almanaque completo: volver a la portada');
       }
+      if (texto && botones[i].textContent !== texto) botones[i].textContent = texto;
     }
   }
 
@@ -323,6 +343,11 @@
       'white-space:nowrap;color:inherit;text-decoration:none;opacity:.78;-webkit-tap-highlight-color:transparent}' +
       '#almanaque-siguiente{margin-left:auto}' +
       '#almanaque-siguiente[hidden]{display:none}' +
+      // Con todo hecho no hay siguiente al que señalar: sin mano ☞ y con «✓ Almanaque completo»
+      // (en pantallas muy estrechas, «✓ Completo») en lugar del nombre.
+      '.almanaque-siguiente--completo .almanaque-volver__mano,.almanaque-siguiente--completo .almanaque-siguiente__nombre,' +
+      '#almanaque-siguiente:not(.almanaque-siguiente--completo) .almanaque-completo,.almanaque-completo__corto{display:none}' +
+      '@media (max-width:25rem){.almanaque-completo__largo{display:none}.almanaque-completo__corto{display:inline}}' +
       '#almanaque-volver:hover,#almanaque-volver:focus-visible,' +
       '#almanaque-siguiente:hover,#almanaque-siguiente:focus-visible{opacity:1}' +
       '#almanaque-volver:focus-visible,#almanaque-siguiente:focus-visible{outline:2px solid currentColor;outline-offset:2px}' +
@@ -360,6 +385,12 @@
     nombre.className = 'almanaque-siguiente__nombre';
     var texto = document.createElement('span');
     texto.appendChild(nombre);
+    // Fijo desde el principio: así cambiar a «completo» no reescribe ningún texto.
+    var completo = document.createElement('span');
+    completo.className = 'almanaque-completo';
+    completo.appendChild(trozo('almanaque-completo__largo', '✓ Almanaque completo'));
+    completo.appendChild(trozo('almanaque-completo__corto', '✓ Completo'));
+    texto.appendChild(completo);
     siguiente.appendChild(texto);
     siguiente.appendChild(mano('☞'));
     // Por si otro juego se ha terminado en otra pestaña o ha pasado la medianoche.
@@ -368,6 +399,13 @@
     franja.appendChild(enlace);
     franja.appendChild(siguiente);
     document.body.insertBefore(franja, document.body.firstChild);
+  }
+
+  function trozo(clase, contenido) {
+    var span = document.createElement('span');
+    span.className = clase;
+    span.textContent = contenido;
+    return span;
   }
 
   function mano(signo) {
