@@ -123,11 +123,15 @@ otro criterio se descuadran fuera de España. Saca la fecha con `getFullYear()`,
    de cada botón de volver (o al final de la página si el juego no tiene), que también
    lleva a la portada; el contenedor es `.almanaque-sello-caja` y el sello,
    `.almanaque-sello`.
-   En el juego que termina el almanaque, al llamar a `almanaqueHecho`, cae confeti con
-   los colores de los juegos de `games.json` y a la vez se estampa el sello (si la
-   pantalla final se abre un poco después, el golpe espera a que se vea): una vez al
-   día (se apunta en `almanaque:confeti`). Con movimiento reducido no hay confeti y el
-   sello sale quieto.
+   En el juego que termina el almanaque, al llamar a `almanaqueHecho`, se abre por
+   encima de la partida una pantalla de almanaque completo (`#almanaque-completo`, un
+   `<dialog>` modal): una hoja con los colores del juego donde se estampa el sello
+   grande, que lleva a la portada, mientras cae confeti con los colores de los juegos de
+   `games.json`. Si el juego abre su pantalla final después (Gazapo, a los 1,1 s), la
+   pantalla vuelve a subir encima sin repetir la entrada. «Ver la partida», tocar fuera
+   de la hoja o Escape la cierran y dejan ver las soluciones. Sale una vez al día (se
+   apunta en `almanaque:confeti`); con movimiento reducido, sin confeti y con el sello
+   quieto.
    Sin conexión (sin `games.json`) no sale nada.
 
    Si el juego coloca algo encima de la franja (como el botón de ayuda de Otrora), la
