@@ -23,8 +23,10 @@
    script pone además, justo encima de cada botón de volver, un botón
    «Siguiente juego: Periplo ☞» con las mismas clases, así que toma el estilo del juego.
    Almanaque completo: con todas las hojas de hoy hechas (también la de este juego), la
-   franja dice en su lugar «✓ Almanaque completo» y el botón, «Almanaque completo ☜»;
-   los dos llevan a la portada, donde espera el sello del día.
+   franja dice en su lugar «✓ Almanaque completo» y lleva a la portada, donde espera el
+   sello del día; en la pantalla final no sale botón de siguiente. En el juego que acaba
+   el almanaque, al llamar a almanaqueHecho, cae confeti con los colores de los juegos
+   (una vez al día, apuntado en almanaque:confeti; nunca con movimiento reducido).
    Id del juego: Almanaque abre cada juego con ?desde=almanaque&juego=<id> y el id se
    recuerda en la pestaña para la ruta de ese juego; si no, sale de la ruta (/Periplo/ → periplo).
    Copia de referencia: se guarda en el repo de Almanaque, en para-los-juegos/.
@@ -41,6 +43,7 @@
   var CLAVE_HECHOS = 'almanaque:hechos';
   var CLAVE_RESULTADOS = 'almanaque:resultados';
   var CLAVE_DIAS = 'almanaque:dias';
+  var CLAVE_CONFETI = 'almanaque:confeti';
   var juego = null;
   var terminadoAqui = false; // el juego ha llamado a almanaqueHecho en esta página
 
@@ -279,23 +282,125 @@
         enlace.setAttribute('aria-label', 'Almanaque completo: volver a la portada');
       }
     }
+    // El almanaque se ha completado con la partida de esta página: se celebra.
+    if (completo && terminadoAqui) celebrar();
     var hecho = hechoHoy();
     var botones = document.querySelectorAll('[data-almanaque-siguiente]');
     for (var i = 0; i < botones.length; i++) {
-      botones[i].hidden = !((j || completo) && hecho);
-      var texto = null;
+      botones[i].hidden = !(j && hecho);
       if (j) {
         botones[i].href = direccionDe(j);
         // Con la mano ☞, como la ☜ del botón de volver.
-        texto = 'Siguiente juego: ' + j.nombre + ' ☞';
+        var texto = 'Siguiente juego: ' + j.nombre + ' ☞';
+        if (botones[i].textContent !== texto) botones[i].textContent = texto;
         botones[i].setAttribute('aria-label', 'Siguiente juego: ' + j.nombre);
-      } else if (completo) {
-        botones[i].href = destino();
-        texto = 'Almanaque completo ☜';
-        botones[i].setAttribute('aria-label', 'Almanaque completo: volver a la portada');
       }
-      if (texto && botones[i].textContent !== texto) botones[i].textContent = texto;
     }
+  }
+
+  /* Confeti de almanaque completo */
+
+  // Una vez al día: el juego vuelve a llamar a almanaqueHecho al abrirlo ya terminado.
+  function celebrar() {
+    try {
+      if (window.localStorage.getItem(CLAVE_CONFETI) === claveDeHoy()) return;
+      window.localStorage.setItem(CLAVE_CONFETI, claveDeHoy());
+    } catch (e) { return; /* sin almacenamiento no se sabría si ya se ha celebrado */ }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.requestAnimationFrame) return;
+    var colores = [];
+    for (var c = 0; c < juegos.length; c++) {
+      if (/^#[0-9a-f]{3,8}$/i.test(juegos[c].color || '')) colores.push(juegos[c].color);
+    }
+    if (!colores.length) colores = ['#a33a2a', '#2b2420', '#c9a227', '#2e7d8c'];
+    lanzarConfeti(colores);
+  }
+
+  // Papelitos disparados desde las dos esquinas de abajo, que suben, se frenan y caen
+  // revoloteando. Un lienzo encima de todo que no recibe toques y se retira al acabar.
+  function lanzarConfeti(colores) {
+    var lienzo = document.createElement('canvas');
+    var ctx = lienzo.getContext && lienzo.getContext('2d');
+    if (!ctx) return;
+    lienzo.setAttribute('aria-hidden', 'true');
+    lienzo.style.cssText = 'position:fixed;inset:0;left:0;top:0;width:100%;height:100%;' +
+      'pointer-events:none;z-index:2147483000';
+    document.body.appendChild(lienzo);
+
+    var ancho, alto, escala = window.devicePixelRatio || 1;
+    function medir() {
+      ancho = window.innerWidth;
+      alto = window.innerHeight;
+      lienzo.width = Math.round(ancho * escala);
+      lienzo.height = Math.round(alto * escala);
+      ctx.setTransform(escala, 0, 0, escala, 0, 0);
+    }
+    medir();
+    window.addEventListener('resize', medir);
+
+    var fuerza = Math.max(0.75, Math.min(1.3, alto / 800));
+    var papeles = [];
+    for (var i = 0; i < 150; i++) {
+      var izquierda = i % 2 === 0;
+      papeles.push({
+        x: izquierda ? -10 : ancho + 10,
+        y: alto * (0.75 + Math.random() * 0.2),
+        vx: (izquierda ? 1 : -1) * (3 + Math.random() * 7) * fuerza,
+        vy: -(11 + Math.random() * 9) * fuerza,
+        giro: Math.random() * Math.PI * 2,
+        vgiro: (Math.random() - 0.5) * 0.35,
+        vaiven: Math.random() * Math.PI * 2,
+        w: 6 + Math.random() * 6,
+        h: 3 + Math.random() * 4,
+        redondo: Math.random() < 0.2,
+        color: colores[Math.floor(Math.random() * colores.length)],
+        retraso: Math.random() * 260
+      });
+    }
+
+    var DURACION = 3600;
+    var inicio = null, anterior = null;
+    function paso(ahora) {
+      if (inicio === null) inicio = anterior = ahora;
+      var t = ahora - inicio;
+      var k = Math.min(3, (ahora - anterior) / 16.7);
+      anterior = ahora;
+      ctx.clearRect(0, 0, ancho, alto);
+      // Se desvanece en el último medio segundo.
+      ctx.globalAlpha = t > DURACION - 500 ? Math.max(0, (DURACION - t) / 500) : 1;
+      for (var i = 0; i < papeles.length; i++) {
+        var p = papeles[i];
+        if (t < p.retraso) continue;
+        p.vx *= Math.pow(0.97, k);
+        p.vy = p.vy * Math.pow(0.97, k) + 0.32 * fuerza * k;
+        if (p.vy > 3.2 * fuerza) p.vy = 3.2 * fuerza;
+        p.vaiven += 0.08 * k;
+        p.x += (p.vx + Math.sin(p.vaiven) * 0.9) * k;
+        p.y += p.vy * k;
+        p.giro += p.vgiro * k;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.giro);
+        // Al girar en el aire, el papelito se ve de canto y de cara.
+        ctx.scale(1, Math.cos(p.vaiven * 1.7));
+        ctx.fillStyle = p.color;
+        if (p.redondo) {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.h, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+        ctx.restore();
+      }
+      if (t < DURACION) {
+        window.requestAnimationFrame(paso);
+      } else {
+        window.removeEventListener('resize', medir);
+        lienzo.remove();
+      }
+    }
+    window.requestAnimationFrame(paso);
   }
 
   // Muestra los botones de volver que haya puesto el juego y les da destino.

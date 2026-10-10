@@ -118,8 +118,10 @@ otro criterio se descuadran fuera de España. Saca la fecha con `getFullYear()`,
    **Almanaque completo.** Cuando ya no queda ninguna hoja por hacer hoy (contando la de
    este juego, que debe estar hecha), la franja muestra a la derecha «✓ Almanaque
    completo» (en pantallas muy estrechas, «✓ Completo») en vez del siguiente juego, sin
-   mano ☞, y el botón de encima del de volver dice
-   «Almanaque completo ☜». Los dos llevan a la portada con `?hecho=<id>`, como la mano ☜.
+   mano ☞, y lleva a la portada con `?hecho=<id>`, como la mano ☜. En la pantalla final
+   no sale botón de siguiente. En el juego que termina el almanaque cae confeti con los
+   colores de los juegos de `games.json` al llamar a `almanaqueHecho`: una vez al día
+   (se apunta en `almanaque:confeti`) y nunca con movimiento reducido.
    Sin conexión (sin `games.json`) no sale nada.
 
    Si el juego coloca algo encima de la franja (como el botón de ayuda de Otrora), la
@@ -241,7 +243,7 @@ Visita `/reiniciar/` (por ejemplo <https://joseleking.github.io/Almanaque/reinic
 pulsa «Borrar todo». Borra las partidas, rachas y estadísticas de todos los juegos y las
 hojas hechas, los resultados de hoy y la racha común de la portada, en ese navegador:
 todo lo que esté guardado bajo `<id>:…` (con los `id` de `games.json`) y las claves
-`almanaque:hechos`, `almanaque:resultados`, `almanaque:dias` y `almanaque:completo`. El modo claro u oscuro de cada juego se conserva (las claves que
+`almanaque:hechos`, `almanaque:resultados`, `almanaque:dias`, `almanaque:completo` y `almanaque:confeti`. El modo claro u oscuro de cada juego se conserva (las claves que
 acaban en `:tema`). Funciona porque todos los juegos comparten origen
 (`joseleking.github.io`); en local solo alcanza a los juegos servidos desde el mismo
 `localhost:puerto`. Un juego nuevo queda incluido solo si guarda bajo `<id>:`.
