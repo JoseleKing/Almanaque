@@ -103,6 +103,25 @@ otro criterio se descuadran fuera de España. Saca la fecha con `getFullYear()`,
    ```
 
    `volver-almanaque.js` lo muestra siempre y lo lleva al mismo sitio que la mano ☜.
+
+   **Siguiente juego.** La franja ofrece siempre a la derecha «Siguiente: Periplo ☞»
+   (en pantallas estrechas, «Regresar al Almanaque» se acorta a «☜ Almanaque»). Con la
+   partida de hoy terminada, el script pone además un botón «Siguiente juego: Periplo ☞»
+   justo encima de cada botón de volver, con sus mismas clases, así que toma el estilo del
+   juego sin tocar su HTML. Los dos llevan al primer juego que sigue en el orden de
+   `games.json` y que aún no está hecho hoy (con vuelta al principio, y sin los de
+   «próximamente»); con todo hecho, o sin conexión, no salen. La lista se lee de
+   `games.json` de Almanaque, así que un juego nuevo aparece solo. Para saber qué está
+   hecho, `almanaqueHecho` apunta también la hoja en `almanaque:hechos`, la lista de la
+   portada, que así la marca aunque no se vuelva con la mano ☜.
+
+   Si el juego coloca algo encima de la franja (como el botón de ayuda de Otrora), la
+   franja entera es `#almanaque-franja`; dentro van `#almanaque-volver` y
+   `#almanaque-siguiente`.
+
+   En `localhost`, la franja y los botones llevan al mismo servidor local en vez de a
+   `joseleking.github.io`: sirviendo todos los repos desde un mismo puerto (por ejemplo
+   una carpeta con enlaces a cada uno) se puede ir de un juego a otro en local.
 5. Modo claro u oscuro: todos los juegos siguen al que se elija en Almanaque (la clave
    `almanaque:tema` del `localStorage` compartido vale `light` o `dark`). Sin elección,
    modo luminoso: nada depende de `prefers-color-scheme`. En el juego, los colores oscuros
